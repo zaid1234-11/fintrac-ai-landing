@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroDashboard from "@/assets/hero-dashboard.jpg";
 
 const Hero = () => {
@@ -32,9 +33,11 @@ const Hero = () => {
                 Join the Waitlist
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button variant="outline" size="lg">
-                Learn More
-              </Button>
+              <Link to="/dashboard">
+                <Button variant="outline" size="lg">
+                  View Demo Dashboard
+                </Button>
+              </Link>
             </div>
             
             <div className="flex items-center gap-8 pt-8 border-t border-border">
