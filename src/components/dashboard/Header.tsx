@@ -5,12 +5,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Menu } from "lucide-react";
+import { Button } from "../ui/button";
 
-export const Header = () => {
+interface HeaderProps {
+  onMenuClick: () => void;
+}
+
+export const Header = ({ onMenuClick }: HeaderProps) => {
   return (
-    <header className="h-16 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-8">
-      <h2 className="text-2xl font-bold text-white">Dashboard</h2>
+    <header className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-slate-700">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenuClick}>
+          <Menu className="w-6 h-6 text-white" />
+        </Button>
+        <h2 className="text-2xl font-bold text-white">Dashboard</h2>
+      </div>
       
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none">
