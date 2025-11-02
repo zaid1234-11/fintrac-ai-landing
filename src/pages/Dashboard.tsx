@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sidebar } from "@/components/dashboard/Sidebar";
+import  Sidebar  from "@/components/dashboard/Sidebar";
 import { Header } from "@/components/dashboard/Header";
 import { Outlet } from "react-router-dom";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";

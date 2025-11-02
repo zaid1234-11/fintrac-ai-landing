@@ -2,53 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
+    /* Light mode - Soft, professional colors */
+    --background: 210 40% 98%;          /* Soft off-white background */
+    --foreground: 222.2 47% 11%;        /* Dark slate text */
+    --card: 0 0% 100%;                  /* Pure white cards */
+    --card-foreground: 222.2 47% 11%;   /* Dark text on cards */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47% 11%;
+    --primary: 221 83% 53%;             /* Your blue primary */
+    --primary-foreground: 0 0% 100%;    /* White text on primary */
+    --secondary: 214 32% 91%;           /* Light blue-gray */
+    --secondary-foreground: 222.2 47% 11%;
+    --muted: 210 40% 96%;               /* Very light gray-blue */
+    --muted-foreground: 215 16% 47%;    /* Medium gray text */
+    --accent: 142 76% 36%;              /* Your green accent */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 88%;              /* Soft gray border */
+    --input: 214 32% 91%;               /* Light input background */
+    --ring: 221 83% 53%;
+    --radius: 0.75rem;
+
+    /* Light mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(221 83% 43%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(210 40% 98%) 0%, hsl(210 40% 94%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+    
+    /* Light shadows */
+    --shadow-glow: 0 0 40px hsl(221 83% 53% / 0.15);
+    --shadow-elevated: 0 8px 32px hsl(222 47% 11% / 0.08);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    /* Dark mode colors - Your original */
     --background: 220 26% 6%;
     --foreground: 210 40% 98%;
-
     --card: 220 26% 8%;
     --card-foreground: 210 40% 98%;
-
     --popover: 220 26% 8%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 221 83% 53%;
     --primary-foreground: 210 40% 98%;
-
     --secondary: 220 26% 12%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 220 26% 12%;
     --muted-foreground: 215 20% 65%;
-
     --accent: 142 76% 36%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 220 26% 15%;
     --input: 220 26% 15%;
     --ring: 142 76% 36%;
 
-    --radius: 0.75rem;
-
-    /* Fintech gradients */
+    /* Dark gradients */
     --gradient-primary: linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(221 83% 43%) 100%);
     --gradient-hero: linear-gradient(180deg, hsl(220 26% 6%) 0%, hsl(220 26% 10%) 100%);
     --gradient-card: linear-gradient(135deg, hsl(220 26% 8%) 0%, hsl(220 26% 12%) 100%);
     
-    /* Shadows */
+    /* Dark shadows */
     --shadow-glow: 0 0 40px hsl(142 76% 36% / 0.2);
     --shadow-elevated: 0 20px 40px hsl(220 26% 4% / 0.4);
-    
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
@@ -56,9 +76,14 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
+  }
+  
+  /* Smooth theme transitions */
+  body,
+  [data-theme] {
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
@@ -91,5 +116,19 @@ All colors MUST be HSL.
 
   .animate-slide-in {
     animation: slide-in 0.8s ease-out 0.2s both;
+  }
+  
+  /* Light mode specific utilities */
+  .light .text-shadow {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .light .card-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  }
+  
+  /* Dark mode specific utilities */
+  .dark .card-shadow {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   }
 }
