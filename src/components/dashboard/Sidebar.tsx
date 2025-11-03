@@ -10,10 +10,12 @@ import {
   LogOut,
   CreditCard,
   ShieldCheck,
-  Wallet,
+  Home,
+  Sparkles,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
   isMobile: boolean;
@@ -24,7 +26,7 @@ interface SidebarProps {
 const mainNavItems = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard", end: true },
   { name: "Transactions", icon: ArrowRightLeft, path: "/dashboard/transactions" },
-  { name: "Budgets", icon: Wallet, path: "/dashboard/budgets" },
+  { name: "Budgets", icon: TrendingUp, path: "/dashboard/budgets" },
   { name: "Invest", icon: TrendingUp, path: "/dashboard/invest" },
   { name: "Mentors", icon: Users, path: "/dashboard/mentors" },
   { name: "Chatbot", icon: Bot, path: "/dashboard/chatbot" },
@@ -37,110 +39,143 @@ const secondaryNavItems = [
   { name: "Support", icon: LifeBuoy, path: "/dashboard/support" },
 ];
 
-const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => (
-  <>
-    <div className="p-6 border-b border-white/10">
-      <div className="flex items-center space-x-3">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-          <span className="text-white font-bold text-lg">F</span>
-        </div>
-        <div>
-          <h2 className="text-white font-bold text-lg">FinTrack AI</h2>
-          <p className="text-slate-400 text-xs">Smart Finance Manager</p>
+const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    navigate("/");
+    if (onNavigate) onNavigate();
+  };
+
+  return (
+    <>
+      {/* Logo */}
+      <div className="flex items-center justify-between p-6 border-b border-slate-700">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Sparkles className="w-8 h-8 text-primary animate-pulse" />
+            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+          </div>
+          <span className="text-xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+            FinTrack AI
+          </span>
         </div>
       </div>
-    </div>
 
-    <ScrollArea className="flex-1 py-4">
-      <nav className="space-y-1 px-3">
-        {mainNavItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            end={item.end}
-            onClick={onNavigate}
-            className={({ isActive }) =>
-              `flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                isActive
-                  ? "bg-primary/20 text-primary border-l-4 border-primary"
-                  : "text-slate-300 hover:bg-white/5 hover:text-white border-l-4 border-transparent"
-              }`
-            }
-          >
-            <item.icon className="w-5 h-5" />
-            <span className="font-medium">{item.name}</span>
-          </NavLink>
-        ))}
-      </nav>
-
-      <div className="my-4 px-3">
-        <div className="h-px bg-white/10"></div>
+      {/* Back to Homepage Button */}
+      <div className="px-4 pt-4">
+        <Button
+          onClick={handleHomeClick}
+          variant="outline"
+          className="w-full justify-start gap-3 border-slate-700 bg-slate-800/50 hover:bg-slate-700/50 text-slate-200 hover:text-white transition-all group"
+        >
+          <Home className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          Back to Homepage
+        </Button>
       </div>
 
-      <nav className="space-y-1 px-3">
-        {secondaryNavItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            onClick={onNavigate}
-            className={({ isActive }) =>
-              `flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                isActive
-                  ? "bg-primary/20 text-primary border-l-4 border-primary"
-                  : "text-slate-300 hover:bg-white/5 hover:text-white border-l-4 border-transparent"
-              }`
-            }
-          >
-            <item.icon className="w-5 h-5" />
-            <span className="font-medium">{item.name}</span>
-          </NavLink>
-        ))}
-      </nav>
-    </ScrollArea>
+      <ScrollArea className="flex-1 px-4 py-4">
+        {/* Main Navigation */}
+        <div className="space-y-1">
+          <p className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            Main
+          </p>
+          {mainNavItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.end}
+              onClick={onNavigate}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive
+                    ? "bg-primary/10 text-primary shadow-md"
+                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                }`
+              }
+            >
+              <item.icon className="w-5 h-5" />
+              <span>{item.name}</span>
+            </NavLink>
+          ))}
+        </div>
 
-    <div className="p-4 border-t border-white/10">
-      <button className="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200 w-full">
-        <LogOut className="w-5 h-5" />
-        <span className="font-medium">Logout</span>
-      </button>
-    </div>
-  </>
-);
+        {/* Secondary Navigation */}
+        <div className="space-y-1 mt-8">
+          <p className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            Account
+          </p>
+          {secondaryNavItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={onNavigate}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive
+                    ? "bg-primary/10 text-primary shadow-md"
+                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                }`
+              }
+            >
+              <item.icon className="w-5 h-5" />
+              <span>{item.name}</span>
+            </NavLink>
+          ))}
+        </div>
+      </ScrollArea>
+
+      {/* Logout Button */}
+      <div className="p-4 border-t border-slate-700">
+        <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
+          <LogOut className="w-5 h-5" />
+          <span>Logout</span>
+        </button>
+      </div>
+    </>
+  );
+};
 
 const Sidebar = ({ isMobile, isOpen, setIsOpen }: SidebarProps) => {
   if (isMobile) {
     return (
       <>
+        {/* Backdrop */}
         {isOpen && (
           <div
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
             onClick={() => setIsOpen?.(false)}
           />
         )}
+
+        {/* Mobile Sidebar */}
         <aside
-          className={`fixed top-0 left-0 h-full w-64 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+          className={`fixed left-0 top-0 h-full w-72 bg-slate-900 border-r border-slate-700 z-50 transform transition-transform duration-300 lg:hidden flex flex-col ${
             isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="absolute top-4 right-4">
-            <button
-              onClick={() => setIsOpen?.(false)}
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-            >
-              <X className="w-5 h-5 text-white" />
-            </button>
-          </div>
+          {/* Close Button */}
+          <button
+            onClick={() => setIsOpen?.(false)}
+            className="absolute top-4 right-4 p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+            aria-label="Close sidebar"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
           <SidebarContent onNavigate={() => setIsOpen?.(false)} />
         </aside>
       </>
     );
   }
 
+  // Desktop Sidebar
   return (
-    <aside className="hidden lg:flex flex-col w-64 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 h-screen sticky top-0">
+    <aside className="hidden lg:flex lg:flex-col h-screen w-72 bg-slate-900 border-r border-slate-700 sticky top-0">
       <SidebarContent />
     </aside>
   );
 };
 
 export default Sidebar;
+

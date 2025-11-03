@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, ArrowRight, Search } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Star, ArrowRight, Search, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 const mentors = [
@@ -115,7 +116,6 @@ const mentors = [
   },
 ];
 
-// Curated list of popular specialties for the filter buttons
 const popularSpecialties = ["Stocks", "Mutual Funds", "Crypto & Web3", "Tax Planning", "Retirement Planning", "Debt Management"];
 
 const MentorsPage = () => {
@@ -139,129 +139,162 @@ const MentorsPage = () => {
   }, [searchTerm, selectedSpecialty]);
 
   return (
-    <div className="relative overflow-hidden p-8 rounded-lg">
-      {/* Background shapes for the liquid effect */}
-      <div className="absolute -top-24 -left-24 w-80 h-80 bg-primary/20 rounded-full filter blur-3xl opacity-60 animate-blob"></div>
-      <div className="absolute -bottom-24 -right-10 w-80 h-80 bg-accent/20 rounded-full filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
-      <div className="absolute -bottom-40 -left-10 w-72 h-72 bg-blue-500/10 rounded-full filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
+    <div className="relative min-h-screen p-4 sm:p-6 lg:p-8">
+      {/* Animated Background - Same as Chatbot */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-0 -left-4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 -right-4 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse [animation-delay:2s]" />
+      </div>
 
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <Card className="mb-8 bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-2xl border-white/20 shadow-2xl">
+          <CardContent className="p-6 sm:p-8">
+            <div className="text-center space-y-4">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="relative">
+                  <Sparkles className="w-8 h-8 text-primary animate-pulse" />
+                  <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                  Financial Mentors
+                </h1>
+              </div>
+              <p className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto">
+                Get personalized advice from vetted financial professionals through flexible subscription plans
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
-      <div className="relative z-10">
-        <div className="text-center mb-12 space-y-4">
-          <h2 className="text-4xl lg:text-5xl font-bold text-white tracking-tight" style={{ textShadow: '0 0 15px hsla(var(--primary), 0.5)' }}>
-            Connect with Financial Mentors
-          </h2>
-          <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            Get personalized advice from vetted financial professionals through flexible subscription plans.
-          </p>
-        </div>
+        {/* Search and Filter */}
+        <Card className="mb-8 bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-2xl border-white/20 shadow-2xl">
+          <CardContent className="p-6 space-y-6">
+            {/* Search Bar */}
+            <div className="relative max-w-2xl mx-auto">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Input
+                type="text"
+                placeholder="Search by name, expertise, or specialty..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full h-12 sm:h-14 pl-12 pr-4 bg-slate-800/70 backdrop-blur-sm border-slate-600/50 text-white placeholder:text-slate-400 rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all shadow-lg"
+              />
+            </div>
 
-        {/* Search and Filter Section */}
-        <div className="mb-12 space-y-6">
-          <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <Input
-              type="text"
-              placeholder="Search by name, expertise, or specialty..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-full bg-slate-800/40 backdrop-blur-lg border border-white/10 text-white placeholder:text-slate-400 focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-            />
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button
-              onClick={() => setSelectedSpecialty(null)}
-              variant={!selectedSpecialty ? 'default' : 'outline'}
-              className={`rounded-full transition-all ${!selectedSpecialty ? 'bg-primary text-white' : 'border-slate-600 text-slate-200 hover:bg-primary/20 hover:text-primary'}`}
-            >
-              All
-            </Button>
-            {popularSpecialties.map(specialty => (
+            {/* Filter Pills */}
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <Button
-                key={specialty}
-                onClick={() => setSelectedSpecialty(specialty)}
-                variant={selectedSpecialty === specialty ? 'default' : 'outline'}
-                className={`rounded-full transition-all ${selectedSpecialty === specialty ? 'bg-primary text-white' : 'border-slate-600 text-slate-200 hover:bg-primary/20 hover:text-primary'}`}
+                onClick={() => setSelectedSpecialty(null)}
+                variant={!selectedSpecialty ? 'default' : 'outline'}
+                className={`rounded-full px-6 transition-all shadow-lg ${
+                  !selectedSpecialty 
+                    ? 'bg-gradient-to-br from-primary to-accent text-white hover:from-primary/90 hover:to-accent/90' 
+                    : 'border-slate-600/50 bg-slate-800/60 backdrop-blur-sm text-slate-200 hover:bg-primary/20 hover:text-primary hover:border-primary/50'
+                }`}
               >
-                {specialty}
+                All Mentors
               </Button>
-            ))}
-          </div>
-        </div>
+              {popularSpecialties.map(specialty => (
+                <Button
+                  key={specialty}
+                  onClick={() => setSelectedSpecialty(specialty)}
+                  variant={selectedSpecialty === specialty ? 'default' : 'outline'}
+                  className={`rounded-full px-6 transition-all shadow-lg ${
+                    selectedSpecialty === specialty 
+                      ? 'bg-gradient-to-br from-primary to-accent text-white hover:from-primary/90 hover:to-accent/90' 
+                      : 'border-slate-600/50 bg-slate-800/60 backdrop-blur-sm text-slate-200 hover:bg-primary/20 hover:text-primary hover:border-primary/50'
+                  }`}
+                >
+                  {specialty}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Mentors Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredMentors.map((mentor, index) => (
-            <div
+            <Card
               key={index}
-              className="group overflow-hidden rounded-2xl bg-slate-800/40 backdrop-blur-xl border border-white/10 shadow-lg transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 flex flex-col"
+              className="group overflow-hidden bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-2xl border-white/20 shadow-2xl transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 animate-in fade-in slide-in-from-bottom-2 duration-500"
+              style={{ animationDelay: `${index * 50}ms` }}
             >
+              {/* Image */}
               <div className="relative h-48 overflow-hidden">
                 <img
                   src={mentor.image}
                   alt={mentor.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+                
+                {/* Rating Badge */}
+                <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-sm border border-white/10">
+                  <Star className="w-4 h-4 text-accent fill-accent" />
+                  <span className="font-semibold text-white text-sm">{mentor.rating}</span>
+                </div>
               </div>
 
-              <div className="p-6 space-y-4 flex flex-col flex-grow">
-                <div className="flex-grow">
+              <CardContent className="p-6 space-y-4">
+                {/* Name & Expertise */}
+                <div>
                   <h3 className="text-xl font-bold text-white mb-1">{mentor.name}</h3>
-                  <p className="text-sm text-primary font-medium" style={{ textShadow: '0 0 8px hsla(var(--primary), 0.7)' }}>{mentor.expertise}</p>
-                
-                  <div className="flex items-center gap-2 text-slate-300 mt-4">
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 text-accent fill-accent" />
-                      <span className="font-semibold text-white">{mentor.rating}</span>
-                    </div>
-                    <span className="text-sm">({mentor.reviews} reviews)</span>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {mentor.specialties.map((specialty, idx) => (
-                      <Badge key={idx} variant="secondary" className="text-xs bg-slate-700/50 text-slate-200 border-slate-600">
-                        {specialty}
-                      </Badge>
-                    ))}
-                  </div>
+                  <p className="text-sm text-primary font-medium">{mentor.expertise}</p>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between pt-4 border-t border-white/10 gap-x-4 gap-y-2 mt-auto">
-                  <span className="text-xl lg:text-2xl font-bold text-primary whitespace-nowrap" style={{ textShadow: '0 0 10px hsla(var(--primary), 0.5)' }}>{mentor.price}</span>
-                  <Button variant="outline" size="sm" className="group/btn border-slate-600 text-slate-200 hover:bg-primary/20 hover:text-primary hover:border-primary/50 flex-shrink-0">
-                    Book Session
+                {/* Reviews */}
+                <div className="flex items-center gap-2 text-slate-300 text-sm">
+                  <span>({mentor.reviews} reviews)</span>
+                </div>
+
+                {/* Specialties */}
+                <div className="flex flex-wrap gap-2">
+                  {mentor.specialties.map((specialty, idx) => (
+                    <Badge 
+                      key={idx} 
+                      variant="secondary" 
+                      className="text-xs bg-slate-700/50 text-slate-200 border border-slate-600/30 backdrop-blur-sm"
+                    >
+                      {specialty}
+                    </Badge>
+                  ))}
+                </div>
+
+                {/* Price & CTA */}
+                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                  <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    {mentor.price}
+                  </span>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="group/btn border-slate-600/50 bg-slate-800/60 backdrop-blur-sm text-slate-200 hover:bg-primary/20 hover:text-primary hover:border-primary/50 rounded-xl"
+                  >
+                    Book
                     <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
-        
-        {filteredMentors.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-xl text-slate-300">No mentors found matching your criteria.</p>
-          </div>
-        )}
 
+        {/* No Results */}
+        {filteredMentors.length === 0 && (
+          <Card className="bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-2xl border-white/20 shadow-2xl">
+            <CardContent className="text-center py-16">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-800/50 flex items-center justify-center">
+                <Search className="w-8 h-8 text-slate-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">No Mentors Found</h3>
+              <p className="text-slate-300">Try adjusting your search or filters</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
-       <style>{`
-        @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.2); }
-          66% { transform: translate(-20px, 20px) scale(0.8); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob {
-          animation: blob 8s infinite ease-in-out;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-       `}</style>
     </div>
   );
 };
