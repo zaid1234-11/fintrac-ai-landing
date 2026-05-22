@@ -6,6 +6,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Fintrac AI - Fintech Dashboard',
   description: 'AI-powered transaction parsing and analytics',
+  icons: {
+    icon: '/android-icon-192x192.png',
+  },
 };
 
 export default function RootLayout({
