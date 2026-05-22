@@ -1,18 +1,1 @@
-{
-  "/_not-found/page": "app/_not-found/page.js",
-  "/(auth)/sign-up/[[...sign-up]]/page": "app/(auth)/sign-up/[[...sign-up]]/page.js",
-  "/(auth)/sign-in/[[...sign-in]]/page": "app/(auth)/sign-in/[[...sign-in]]/page.js",
-  "/api/webhooks/clerk/route": "app/api/webhooks/clerk/route.js",
-  "/page": "app/page.js",
-  "/dashboard/cards/page": "app/dashboard/cards/page.js",
-  "/dashboard/ai-analysis/page": "app/dashboard/ai-analysis/page.js",
-  "/dashboard/budgets/page": "app/dashboard/budgets/page.js",
-  "/dashboard/chatbot/page": "app/dashboard/chatbot/page.js",
-  "/dashboard/mentors/page": "app/dashboard/mentors/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/dashboard/security/page": "app/dashboard/security/page.js",
-  "/dashboard/invest/page": "app/dashboard/invest/page.js",
-  "/dashboard/transactions/page": "app/dashboard/transactions/page.js",
-  "/dashboard/support/page": "app/dashboard/support/page.js",
-  "/dashboard/settings/page": "app/dashboard/settings/page.js"
-}
+{}
