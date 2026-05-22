@@ -1,0 +1,32 @@
+import { auth } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+
+export async function GET(req: Request) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const supabase = await createClient();
+    const { data: statements, error } = await supabase
+      .from('bank_statements')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('[Statement Status API] Select error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(statements);
+  } catch (error: any) {
+    console.error('[Statement Status API] Unexpected error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}

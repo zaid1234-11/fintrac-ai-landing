@@ -34,6 +34,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTransactions } from "@/contexts/TransactionContext";
 import { toast } from "sonner";
 import { ReceiptScanner } from "@/components/ReceiptScanner";
+import { TransactionUpload } from "@/components/dashboard/TransactionUpload";
 
 const categoryIcons: { [key: string]: React.ElementType } = {
   Food: Utensils,
@@ -46,7 +47,7 @@ const categoryIcons: { [key: string]: React.ElementType } = {
 };
 
 const TransactionsPage = () => {
-  const { transactions, addTransaction } = useTransactions();
+  const { transactions, addTransaction, refreshTransactions } = useTransactions();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "debit" | "credit">("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -126,6 +127,9 @@ const TransactionsPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Summary + Filters */}
         <div className="lg:col-span-1 space-y-8">
+          {/* Ingest Bank Statement */}
+          <TransactionUpload onUploadSuccess={refreshTransactions} />
+
           {/* Spending Summary Graph */}
           <Card className="bg-slate-800/40 backdrop-blur-xl border-white/10 shadow-lg shadow-primary/10">
             <CardHeader>
