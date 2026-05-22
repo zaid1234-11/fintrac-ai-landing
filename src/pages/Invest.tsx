@@ -7,7 +7,7 @@ import { Loader2, Sparkles, TrendingUp, Target, Calendar, HelpCircle, ArrowRight
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import { Badge } from "@/components/ui/badge";
-import { generateOpenAIContent } from "@/services/openai";
+import { generateOpenRouterContent } from "@/services/openrouter";
 
 // Mock Market Data
 const marketMovers = [
@@ -69,8 +69,8 @@ const InvestPage = () => {
     `;
 
     try {
-      const data = await generateOpenAIContent({
-        model: "gpt-4o-mini",
+      const data = await generateOpenRouterContent({
+        model: "openai/gpt-4o-mini",
         prompt,
       });
       const text = data.choices?.[0]?.message?.content;

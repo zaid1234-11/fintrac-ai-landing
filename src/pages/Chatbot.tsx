@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useTransactions } from "@/contexts/TransactionContext";
 import { useBudgets } from "@/contexts/BudgetContext";
-import { generateOpenAIContent } from "@/services/openai";
+import { generateOpenRouterContent } from "@/services/openrouter";
 
 interface Message {
   role: 'user' | 'ai';
@@ -59,7 +59,7 @@ const ChatbotPage = () => {
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: 'ai', 
-      content: "Hey there! 👋 I'm your AI financial assistant powered by OpenAI GPT-4o Mini.\n\nI can help you with:\n\n✨ Spending analysis & patterns\n💰 Budget tracking & alerts\n📊 Financial insights & tips\n🎯 Smart money management\n\nTry asking me a question below, or pick a suggested one!", 
+      content: "Hey there! 👋 I'm your AI financial assistant powered by OpenRouter (GPT-4o Mini).\n\nI can help you with:\n\n✨ Spending analysis & patterns\n💰 Budget tracking & alerts\n📊 Financial insights & tips\n🎯 Smart money management\n\nTry asking me a question below, or pick a suggested one!", 
       timestamp: new Date()
     }
   ]);
@@ -137,8 +137,8 @@ User: "${userInput}"
 Provide helpful financial insights. Use ₹ format. Keep under 150 words. Be encouraging. Use relevant emojis.
 `;
 
-      const data = await generateOpenAIContent({
-        model: "gpt-4o-mini",
+      const data = await generateOpenRouterContent({
+        model: "openai/gpt-4o-mini",
         prompt,
         temperature: 0.7,
       });
@@ -187,7 +187,7 @@ Provide helpful financial insights. Use ₹ format. Keep under 150 words. Be enc
                 <CardDescription className="text-slate-300 mt-2 flex flex-wrap items-center gap-2">
                   <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10">
                     <Sparkles className="w-3 h-3 mr-1" />
-                    GPT-4o Mini
+                    OpenRouter
                   </Badge>
                   <Badge variant="outline" className="border-blue-500/30 text-blue-400 bg-blue-500/10">
                     {transactions.length} transactions
@@ -310,7 +310,7 @@ Provide helpful financial insights. Use ₹ format. Keep under 150 words. Be enc
               </div>
               <p className="text-xs text-slate-400 mt-3 text-center flex items-center justify-center gap-2">
                 <Sparkles className="w-3 h-3" />
-                Powered by OpenAI GPT-4o Mini
+                Powered by OpenRouter (GPT-4o Mini)
               </p>
             </div>
           </CardContent>

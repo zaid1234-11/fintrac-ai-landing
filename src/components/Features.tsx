@@ -14,7 +14,7 @@ const Features = () => {
     {
       icon: Bot,
       title: "AI Assistant",
-      description: "Chat with OpenAI GPT-4o for personalized financial advice and instant answers to your money questions.",
+      description: "Chat with OpenRouter (GPT-4o Mini) for personalized financial advice and instant answers to your money questions.",
       gradient: "from-purple-500/20 via-pink-500/20 to-purple-500/20",
       iconColor: "text-purple-400",
       iconBg: "from-purple-500 to-pink-500"

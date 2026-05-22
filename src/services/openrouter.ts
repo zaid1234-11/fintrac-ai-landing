@@ -1,20 +1,20 @@
-const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-interface GenerateOpenAIContentOptions {
+interface GenerateContentOptions {
   model?: string;
   prompt: string;
   temperature?: number;
 }
 
-export async function generateOpenAIContent({
-  model = "gpt-4o-mini",
+export async function generateOpenRouterContent({
+  model = "openai/gpt-4o-mini",
   prompt,
   temperature = 0.7,
-}: GenerateOpenAIContentOptions) {
+}: GenerateContentOptions) {
   const messages = [{ role: "user", content: prompt }];
 
   if (import.meta.env.PROD) {
-    const response = await fetch("/api/openai", {
+    const response = await fetch("/api/openrouter", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ model, messages, temperature }),
@@ -23,23 +23,25 @@ export async function generateOpenAIContent({
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "OpenAI API request failed.");
+      throw new Error(data.error || "OpenRouter API request failed.");
     }
 
     return data;
   }
 
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY?.trim();
+  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY?.trim();
 
   if (!apiKey) {
-    throw new Error("OpenAI API key missing. Add VITE_OPENAI_API_KEY to .env for local development.");
+    throw new Error("OpenRouter API key missing. Add VITE_OPENROUTER_API_KEY to .env for local development.");
   }
 
-  const response = await fetch(OPENAI_API_URL, {
+  const response = await fetch(OPENROUTER_API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${apiKey}`,
+      "HTTP-Referer": "http://localhost:8080",
+      "X-OpenRouter-Title": "FinTrac AI Local Dev",
     },
     body: JSON.stringify({ model, messages, temperature }),
   });
@@ -47,13 +49,13 @@ export async function generateOpenAIContent({
   const data = await response.json();
 
   if (!response.ok) {
-    let errMsg = data.error?.message || "OpenAI API request failed.";
+    let errMsg = data.error?.message || "OpenRouter API request failed.";
     if (typeof errMsg === "string") {
       if (apiKey) {
         const escapedKey = apiKey.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
         errMsg = errMsg.replace(new RegExp(escapedKey, 'g'), '[REDACTED]');
       }
-      errMsg = errMsg.replace(/sk-[a-zA-Z0-9]{20,}/g, '[REDACTED]');
+      errMsg = errMsg.replace(/sk-or-[a-zA-Z0-9]{20,}/g, '[REDACTED]');
     }
     throw new Error(errMsg);
   }

@@ -1,4 +1,4 @@
-const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 function parseJson(value) {
   if (!value) return {};
@@ -17,48 +17,50 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY || process.env.VITE_OPENROUTER_API_KEY;
 
   if (!apiKey?.trim()) {
-    return res.status(500).json({ error: "OpenAI API key is not configured." });
+    return res.status(500).json({ error: "OpenRouter API key is not configured." });
   }
 
   const payload = parseJson(req.body);
-  const { model = "gpt-4o-mini", messages, temperature = 0.7 } = payload;
+  const { model = "openai/gpt-4o-mini", messages, temperature = 0.7 } = payload;
 
   if (!Array.isArray(messages) || messages.length === 0) {
-    return res.status(400).json({ error: "Missing OpenAI messages payload." });
+    return res.status(400).json({ error: "Missing OpenRouter messages payload." });
   }
 
   try {
-    const openaiResponse = await fetch(OPENAI_API_URL, {
+    const openrouterResponse = await fetch(OPENROUTER_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey.trim()}`,
+        "HTTP-Referer": "https://fintrac-ai-landing.vercel.app",
+        "X-OpenRouter-Title": "FinTrac AI",
       },
       body: JSON.stringify({ model, messages, temperature }),
     });
 
-    const responseText = await openaiResponse.text();
+    const responseText = await openrouterResponse.text();
     const data = parseJson(responseText);
 
-    if (!openaiResponse.ok) {
-      let errMsg = data.error?.message || "OpenAI API request failed.";
+    if (!openrouterResponse.ok) {
+      let errMsg = data.error?.message || "OpenRouter API request failed.";
       if (typeof errMsg === "string") {
         if (apiKey) {
           const escapedKey = apiKey.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
           errMsg = errMsg.replace(new RegExp(escapedKey, 'g'), '[REDACTED]');
         }
-        errMsg = errMsg.replace(/sk-[a-zA-Z0-9]{20,}/g, '[REDACTED]');
+        errMsg = errMsg.replace(/sk-or-[a-zA-Z0-9]{20,}/g, '[REDACTED]');
       }
-      return res.status(openaiResponse.status).json({ error: errMsg });
+      return res.status(openrouterResponse.status).json({ error: errMsg });
     }
 
     return res.status(200).json(data);
   } catch (error) {
     return res.status(500).json({
-      error: error instanceof Error ? error.message : "Unexpected OpenAI API error.",
+      error: error instanceof Error ? error.message : "Unexpected OpenRouter API error.",
     });
   }
 }
