@@ -26,7 +26,7 @@ CREATE TABLE public.users (
 
 -- 2. Subscriptions Table
 CREATE TABLE public.subscriptions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     tier subscription_tier DEFAULT 'free',
     stripe_customer_id TEXT,
@@ -39,7 +39,7 @@ CREATE TABLE public.subscriptions (
 
 -- 3. Categories Table
 CREATE TABLE public.categories (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES public.users(id) ON DELETE CASCADE, -- Null means global/system category
     name TEXT NOT NULL,
     type transaction_type NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE public.categories (
 
 -- 4. Transactions Table
 CREATE TABLE public.transactions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     category_id UUID REFERENCES public.categories(id) ON DELETE SET NULL,
     amount DECIMAL(12, 2) NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE public.transactions (
 
 -- 5. Bank Statements Table
 CREATE TABLE public.bank_statements (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     bank_name TEXT NOT NULL,
     account_number_last_4 VARCHAR(4),
@@ -96,7 +96,7 @@ CREATE TABLE public.bank_statements (
 
 -- 6. SMS Logs Table
 CREATE TABLE public.sms_logs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     sender_id TEXT NOT NULL,
     raw_message TEXT NOT NULL,
@@ -108,7 +108,7 @@ CREATE TABLE public.sms_logs (
 
 -- 7. AI Insights Table
 CREATE TABLE public.ai_insights (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     type insight_type NOT NULL,
     title TEXT NOT NULL,
@@ -121,7 +121,7 @@ CREATE TABLE public.ai_insights (
 
 -- 8. Blockchain Records Table
 CREATE TABLE public.blockchain_records (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     transaction_id UUID NOT NULL REFERENCES public.transactions(id) ON DELETE CASCADE,
     previous_hash TEXT NOT NULL,
     current_hash TEXT NOT NULL UNIQUE,
@@ -133,7 +133,7 @@ CREATE TABLE public.blockchain_records (
 
 -- 9. Audit Logs Table
 CREATE TABLE public.audit_logs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     table_name TEXT NOT NULL,
     record_id UUID NOT NULL,
     action VARCHAR(20) NOT NULL, -- 'INSERT', 'UPDATE', 'DELETE'
@@ -146,7 +146,7 @@ CREATE TABLE public.audit_logs (
 
 -- 10. Uploaded Files Table
 CREATE TABLE public.uploaded_files (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     bucket_id TEXT NOT NULL,
     file_path TEXT NOT NULL,
