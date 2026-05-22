@@ -30,7 +30,7 @@ interface BudgetProviderProps {
 
 export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
   const [budgets, setBudgets] = useState<Budget[]>(() => {
-    const saved = localStorage.getItem('fintrack_budgets');
+    const saved = (typeof window !== 'undefined' ? localStorage.getItem('fintrack_budgets') : null);
     return saved ? JSON.parse(saved) : [
       {
         id: '1',
@@ -63,7 +63,7 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
   });
 
   useEffect(() => {
-    localStorage.setItem('fintrack_budgets', JSON.stringify(budgets));
+    if (typeof window !== 'undefined') localStorage.setItem('fintrack_budgets', JSON.stringify(budgets));
   }, [budgets]);
 
   const addBudget = (budget: Omit<Budget, 'id' | 'spent'>) => {

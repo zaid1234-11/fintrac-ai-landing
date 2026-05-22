@@ -18,7 +18,7 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
-    const saved = localStorage.getItem('fintrack_theme');
+    const saved = (typeof window !== 'undefined' ? localStorage.getItem('fintrack_theme') : null);
     return (saved as Theme) || 'dark';
   });
 
@@ -32,7 +32,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     root.classList.add(theme);
     
     // Save to localStorage
-    localStorage.setItem('fintrack_theme', theme);
+    if (typeof window !== 'undefined') localStorage.setItem('fintrack_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {

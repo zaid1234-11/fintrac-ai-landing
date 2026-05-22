@@ -16,7 +16,7 @@ export class TransactionBlockchain {
 
   constructor() {
     // Load from localStorage or create genesis block
-    const stored = localStorage.getItem(this.storageKey);
+    const stored = (typeof window !== 'undefined' ? localStorage.getItem(this.storageKey) : null);
     if (stored) {
       this.chain = JSON.parse(stored);
     } else {
@@ -123,7 +123,7 @@ export class TransactionBlockchain {
   }
 
   private saveChain(): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(this.chain));
+    if (typeof window !== 'undefined') localStorage.setItem(this.storageKey, JSON.stringify(this.chain));
   }
 
   exportChain(): string {

@@ -39,13 +39,13 @@ interface TransactionProviderProps {
 
 export const TransactionProvider: React.FC<TransactionProviderProps> = ({ children }) => {
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
-    const saved = localStorage.getItem('fintrack_transactions');
+    const saved = (typeof window !== 'undefined' ? localStorage.getItem('fintrack_transactions') : null);
     return saved ? JSON.parse(saved) : initialTransactions;
   });
   const [lastUpdated, setLastUpdated] = useState(Date.now());
 
   useEffect(() => {
-    localStorage.setItem('fintrack_transactions', JSON.stringify(transactions));
+    if (typeof window !== 'undefined') localStorage.setItem('fintrack_transactions', JSON.stringify(transactions));
     setLastUpdated(Date.now());
   }, [transactions]);
 

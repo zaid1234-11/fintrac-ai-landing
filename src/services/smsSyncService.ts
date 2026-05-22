@@ -101,13 +101,15 @@ export class SMSSyncService {
   }
 
   private getLastSyncTimestamp(): number {
-    const stored = localStorage.getItem('fintrack_last_sms_sync');
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('fintrack_last_sms_sync') : null;
     return stored ? parseInt(stored) : Date.now();
   }
 
   private updateLastSyncTimestamp(): void {
     this.lastSyncTimestamp = Date.now();
-    localStorage.setItem('fintrack_last_sms_sync', this.lastSyncTimestamp.toString());
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('fintrack_last_sms_sync', this.lastSyncTimestamp.toString());
+    }
   }
 
   getBlockchainStatus() {
