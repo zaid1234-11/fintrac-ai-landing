@@ -1,9 +1,10 @@
+"use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sparkles, TrendingUp, AlertTriangle, Lightbulb, ArrowRight } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { useTransactions } from "@/contexts/TransactionContext";
 
 
@@ -20,7 +21,7 @@ interface Insight {
 export const AIInsights = () => {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
   const { transactions, lastUpdated } = useTransactions();
 
   // Calculate insights from real transaction data
@@ -281,7 +282,7 @@ export const AIInsights = () => {
               variant="outline" 
               className="w-full mt-4" 
               size="sm"
-              onClick={() => navigate('/dashboard/ai-analysis')}
+              onClick={() => router.push('/dashboard/ai-analysis')}
             >
               View Detailed Analysis
               <ArrowRight className="h-4 w-4 ml-2" />

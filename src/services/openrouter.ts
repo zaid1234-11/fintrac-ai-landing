@@ -13,7 +13,7 @@ export async function generateOpenRouterContent({
 }: GenerateContentOptions) {
   const messages = [{ role: "user", content: prompt }];
 
-  if (import.meta.env.PROD) {
+  if (process.env.NODE_ENV === "production") {
     const response = await fetch("/api/openrouter", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -29,10 +29,10 @@ export async function generateOpenRouterContent({
     return data;
   }
 
-  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY?.trim();
+  const apiKey = (process.env.NEXT_PUBLIC_OPENROUTER_API_KEY || process.env.VITE_OPENROUTER_API_KEY)?.trim();
 
   if (!apiKey) {
-    throw new Error("OpenRouter API key missing. Add VITE_OPENROUTER_API_KEY to .env for local development.");
+    throw new Error("OpenRouter API key missing. Add NEXT_PUBLIC_OPENROUTER_API_KEY to .env.local for local development.");
   }
 
   const response = await fetch(OPENROUTER_API_URL, {
@@ -40,7 +40,7 @@ export async function generateOpenRouterContent({
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${apiKey}`,
-      "HTTP-Referer": "http://localhost:8080",
+      "HTTP-Referer": "http://localhost:3000",
       "X-OpenRouter-Title": "FinTrac AI Local Dev",
     },
     body: JSON.stringify({ model, messages, temperature }),

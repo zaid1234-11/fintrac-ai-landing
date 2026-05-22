@@ -1,10 +1,12 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, TrendingUp, Wallet, BarChart3, PieChart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from 'next/navigation';
 
 const Hero = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -38,7 +40,7 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Button
                 size="lg"
-                onClick={() => navigate("/dashboard")}
+                onClick={() => router.push("/dashboard")}
                 className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-2xl shadow-primary/30 text-lg px-8 py-6 rounded-2xl group"
               >
                 Get Started Free

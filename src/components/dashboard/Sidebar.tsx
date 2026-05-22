@@ -1,3 +1,5 @@
+"use client";
+
 import {
   LayoutDashboard,
   ArrowRightLeft,
@@ -12,7 +14,8 @@ import {
   ShieldCheck,
   Home,
 } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 
@@ -39,10 +42,11 @@ const secondaryNavItems = [
 ];
 
 const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleHomeClick = () => {
-    navigate("/");
+    router.push("/");
     if (onNavigate) onNavigate();
   };
 
@@ -80,24 +84,24 @@ const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
           <p className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
             Main
           </p>
-          {mainNavItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              end={item.end}
-              onClick={onNavigate}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+          {mainNavItems.map((item) => {
+            const isActive = item.end ? pathname === item.path : pathname?.startsWith(item.path);
+            return (
+              <Link
+                key={item.path}
+                href={item.path}
+                onClick={onNavigate}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                   isActive
                     ? "bg-primary/10 text-primary shadow-md"
                     : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                }`
-              }
-            >
-              <item.icon className="w-5 h-5" />
-              <span>{item.name}</span>
-            </NavLink>
-          ))}
+                }`}
+              >
+                <item.icon className="w-5 h-5" />
+                <span>{item.name}</span>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Secondary Navigation */}
@@ -105,23 +109,24 @@ const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
           <p className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
             Account
           </p>
-          {secondaryNavItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={onNavigate}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+          {secondaryNavItems.map((item) => {
+            const isActive = pathname?.startsWith(item.path);
+            return (
+              <Link
+                key={item.path}
+                href={item.path}
+                onClick={onNavigate}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                   isActive
                     ? "bg-primary/10 text-primary shadow-md"
                     : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                }`
-              }
-            >
-              <item.icon className="w-5 h-5" />
-              <span>{item.name}</span>
-            </NavLink>
-          ))}
+                }`}
+              >
+                <item.icon className="w-5 h-5" />
+                <span>{item.name}</span>
+              </Link>
+            );
+          })}
         </div>
       </ScrollArea>
 
@@ -178,4 +183,3 @@ const Sidebar = ({ isMobile, isOpen, setIsOpen }: SidebarProps) => {
 };
 
 export default Sidebar;
-

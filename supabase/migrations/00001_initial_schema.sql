@@ -14,7 +14,7 @@ CREATE TYPE statement_status AS ENUM ('processing', 'completed', 'failed');
 
 -- 1. Users Table
 CREATE TABLE public.users (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    id TEXT PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
     full_name TEXT,
     avatar_url TEXT,
@@ -27,7 +27,7 @@ CREATE TABLE public.users (
 -- 2. Subscriptions Table
 CREATE TABLE public.subscriptions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     tier subscription_tier DEFAULT 'free',
     stripe_customer_id TEXT,
     stripe_subscription_id TEXT,
@@ -40,7 +40,7 @@ CREATE TABLE public.subscriptions (
 -- 3. Categories Table
 CREATE TABLE public.categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE, -- Null means global/system category
+    user_id TEXT REFERENCES public.users(id) ON DELETE CASCADE, -- Null means global/system category
     name TEXT NOT NULL,
     type transaction_type NOT NULL,
     icon TEXT,
@@ -51,7 +51,7 @@ CREATE TABLE public.categories (
 -- 4. Transactions Table
 CREATE TABLE public.transactions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     category_id UUID REFERENCES public.categories(id) ON DELETE SET NULL,
     amount DECIMAL(12, 2) NOT NULL,
     currency VARCHAR(3) DEFAULT 'INR',
@@ -82,7 +82,7 @@ CREATE TABLE public.transactions (
 -- 5. Bank Statements Table
 CREATE TABLE public.bank_statements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     bank_name TEXT NOT NULL,
     account_number_last_4 VARCHAR(4),
     statement_period_start DATE,
@@ -97,7 +97,7 @@ CREATE TABLE public.bank_statements (
 -- 6. SMS Logs Table
 CREATE TABLE public.sms_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     sender_id TEXT NOT NULL,
     raw_message TEXT NOT NULL,
     received_at TIMESTAMPTZ NOT NULL,
@@ -109,7 +109,7 @@ CREATE TABLE public.sms_logs (
 -- 7. AI Insights Table
 CREATE TABLE public.ai_insights (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     type insight_type NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -139,7 +139,7 @@ CREATE TABLE public.audit_logs (
     action VARCHAR(20) NOT NULL, -- 'INSERT', 'UPDATE', 'DELETE'
     old_data JSONB,
     new_data JSONB,
-    changed_by UUID REFERENCES public.users(id) ON DELETE SET NULL,
+    changed_by TEXT REFERENCES public.users(id) ON DELETE SET NULL,
     ip_address TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -147,7 +147,7 @@ CREATE TABLE public.audit_logs (
 -- 10. Uploaded Files Table
 CREATE TABLE public.uploaded_files (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     bucket_id TEXT NOT NULL,
     file_path TEXT NOT NULL,
     file_type TEXT,

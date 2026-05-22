@@ -1,8 +1,10 @@
+"use client";
+
 import { Sparkles, Twitter, Linkedin, Instagram, Mail, Heart, Github } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from 'next/navigation';
 
 const Footer = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const footerLinks = {
     product: [

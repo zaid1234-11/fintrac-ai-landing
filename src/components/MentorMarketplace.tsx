@@ -1,8 +1,10 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from 'next/navigation';
 
 const mentors = [
   {
@@ -35,10 +37,10 @@ const mentors = [
 ];
 
 const MentorMarketplace = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleViewAllMentors = () => {
-    navigate("/dashboard/mentors");
+    router.push("/dashboard/mentors");
     // Scroll to top after navigation
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
