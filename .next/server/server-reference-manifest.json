@@ -1,0 +1,76 @@
+{
+  "node": {
+    "7e75e768fd9971913b309f86dbc7731fec84f874": {
+      "workers": {
+        "app/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!",
+        "app/dashboard/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/page": "rsc",
+        "app/dashboard/page": "rsc"
+      }
+    },
+    "de3e84aa3db18aa18817bf48ecc06152643cc132": {
+      "workers": {
+        "app/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!",
+        "app/dashboard/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/page": "rsc",
+        "app/dashboard/page": "rsc"
+      }
+    },
+    "02b65006fb8549a2983527240a08ff160775ed2c": {
+      "workers": {
+        "app/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!",
+        "app/dashboard/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/page": "rsc",
+        "app/dashboard/page": "rsc"
+      }
+    },
+    "13266fb7f052df0654d13cd58765208b89df2ccf": {
+      "workers": {
+        "app/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!",
+        "app/dashboard/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/page": "rsc",
+        "app/dashboard/page": "rsc"
+      }
+    },
+    "c4bc0ffeac5882f43c537617086758a3406240b8": {
+      "workers": {
+        "app/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!",
+        "app/dashboard/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/page": "rsc",
+        "app/dashboard/page": "rsc"
+      }
+    },
+    "d4dd3cb8515a0ce0dd8a8766b1b1a0a586e66776": {
+      "workers": {
+        "app/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!",
+        "app/dashboard/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Cserver%5C%5Ckeyless-custom-headers.js%22%2C%5B%22collectKeylessMetadata%22%2C%22formatMetadataHeaders%22%5D%5D%2C%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Ckeyless-actions.js%22%2C%5B%22deleteKeylessAction%22%2C%22syncKeylessConfigAction%22%2C%22detectKeylessEnvDriftAction%22%2C%22createOrReadKeylessAction%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/page": "rsc",
+        "app/dashboard/page": "rsc"
+      }
+    },
+    "78364b1797c7e3f0efd34070e64b3557f74cddbe": {
+      "workers": {
+        "app/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Cserver-actions.js%22%2C%5B%22invalidateCacheAction%22%5D%5D%5D&__client_imported__=true!",
+        "app/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5Czaids%5C%5C.gemini%5C%5Cantigravity%5C%5Cscratch%5C%5Cfintrac-ai-landing%5C%5Cnode_modules%5C%5C%40clerk%5C%5Cnextjs%5C%5Cdist%5C%5Cesm%5C%5Capp-router%5C%5Cserver-actions.js%22%2C%5B%22invalidateCacheAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/page": "action-browser",
+        "app/dashboard/page": "action-browser"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "THY15XCTt+FbD5yPdhq+KYdFjh1e/myD/VpXMfMZllY="
+}
