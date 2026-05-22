@@ -1,0 +1,98 @@
+-- Migration 00003: Row Level Security (RLS) Policies
+
+-- Enable RLS on all tables
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.bank_statements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sms_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ai_insights ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.blockchain_records ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.uploaded_files ENABLE ROW LEVEL SECURITY;
+
+-- 1. Users
+CREATE POLICY "Users can view own profile" 
+    ON public.users FOR SELECT 
+    USING (auth.uid() = id);
+
+CREATE POLICY "Users can update own profile" 
+    ON public.users FOR UPDATE 
+    USING (auth.uid() = id);
+
+-- 2. Subscriptions
+CREATE POLICY "Users can view own subscriptions" 
+    ON public.subscriptions FOR SELECT 
+    USING (auth.uid() = user_id);
+
+-- 3. Categories
+CREATE POLICY "Users can view global and own categories" 
+    ON public.categories FOR SELECT 
+    USING (user_id IS NULL OR auth.uid() = user_id);
+
+CREATE POLICY "Users can manage own categories" 
+    ON public.categories FOR ALL 
+    USING (auth.uid() = user_id);
+
+-- 4. Transactions
+CREATE POLICY "Users can view own transactions" 
+    ON public.transactions FOR SELECT 
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own transactions" 
+    ON public.transactions FOR INSERT 
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own transactions" 
+    ON public.transactions FOR UPDATE 
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own transactions" 
+    ON public.transactions FOR DELETE 
+    USING (auth.uid() = user_id);
+
+-- 5. Bank Statements
+CREATE POLICY "Users can view own bank statements" 
+    ON public.bank_statements FOR SELECT 
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own bank statements" 
+    ON public.bank_statements FOR INSERT 
+    WITH CHECK (auth.uid() = user_id);
+
+-- 6. SMS Logs
+CREATE POLICY "Users can view own sms logs" 
+    ON public.sms_logs FOR SELECT 
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own sms logs" 
+    ON public.sms_logs FOR INSERT 
+    WITH CHECK (auth.uid() = user_id);
+
+-- 7. AI Insights
+CREATE POLICY "Users can view own AI insights" 
+    ON public.ai_insights FOR SELECT 
+    USING (auth.uid() = user_id);
+
+-- 8. Blockchain Records
+CREATE POLICY "Users can view own blockchain records" 
+    ON public.blockchain_records FOR SELECT 
+    USING (EXISTS (
+        SELECT 1 FROM public.transactions t 
+        WHERE t.id = blockchain_records.transaction_id AND t.user_id = auth.uid()
+    ));
+
+-- 9. Audit Logs
+CREATE POLICY "Users can view own audit logs" 
+    ON public.audit_logs FOR SELECT 
+    USING (changed_by = auth.uid());
+
+-- 10. Uploaded Files
+CREATE POLICY "Users can view own uploaded files" 
+    ON public.uploaded_files FOR SELECT 
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own uploaded files" 
+    ON public.uploaded_files FOR INSERT 
+    WITH CHECK (auth.uid() = user_id);
