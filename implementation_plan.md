@@ -48,11 +48,46 @@ This document outlines the two-phase plan to completely restructure Fintrac AI i
 
 ---
 
+## Phase 3: Clerk ↔ Supabase Synchronization & Security Architecture
+
+This phase focuses on the secure, authenticated database architecture, connecting Clerk user events to Supabase via Svix webhooks, and implementing fintech-grade Row Level Security.
+
+### 1. Database Schema modifications
+- **[SQL]** We will execute a schema migration on your Supabase `users` table to adhere to best practices:
+  - Keep `id` as an internal `UUID` primary key.
+  - Add `clerk_user_id` as a `TEXT UNIQUE NOT NULL` field.
+  - Update any dependent foreign keys.
+
+### 2. JWT Integration (Clerk to Supabase)
+- **[DASHBOARD]** Provide you with the exact JSON template to configure the "Supabase" JWT template in your Clerk Dashboard.
+- **[NEW]** Define the claims structure so Supabase RLS can securely identify the user via `request.jwt.claims()`.
+
+### 3. Secure Supabase Clients (`src/lib/supabase/`)
+- **[NEW]** `client.ts`: Authenticated browser client using `@supabase/supabase-js` that fetches the active Clerk session token dynamically.
+- **[MODIFY]** `server.ts`: Server Component/Server Action client that reads the Clerk token securely from the Next.js auth context.
+- **[NEW]** `admin.ts`: Secure service-role client used EXCLUSIVELY by webhooks and secure backend processes.
+
+### 4. Clerk Webhook Integration
+- **[NEW]** `src/app/api/webhooks/clerk/route.ts`: A secure Next.js API Route handler using `svix` to verify incoming signatures.
+- **[LOGIC]** Handle `user.created`, `user.updated`, and `user.deleted` events. Use `admin.ts` to sync these events directly into the Supabase `users` table.
+
+### 5. Fintech-grade Row Level Security (RLS)
+- **[SQL]** Generate and apply strict RLS policies to `users`, `transactions`, and `ai_insights`.
+- **[LOGIC]** Ensure policies read the `clerk_user_id` from the decoded JWT claims (`(auth.jwt()->>'sub')`), isolating financial data perfectly.
+
+### 6. Documentation
+- **[NEW ARTIFACT]** Generate `clerk_supabase_sync.md` documenting the auth architecture, webhook setup, and token flow.
+
+---
+
 ## Verification Plan
 
-### Automated Tests
-1. **Next.js Build**: Execute `npm run build` to verify all components compiled successfully, no React Router references remain, and Server/Client component directives (`"use client"`) are properly placed.
-2. **ESLint/TS Check**: Ensure there are no broken path aliases.
+### Automated / Code Checks
+- Ensure webhook signature verification throws 400 on bad secrets.
+- Ensure Supabase queries from `client.ts` automatically attach the `Authorization: Bearer <token>` header.
 
 ### Manual Verification
-- You will test `npm run dev`, verify that the landing page loads successfully in the new Next.js architecture, and log in securely via Clerk's Google OAuth flow. Finally, you will check your Supabase `public.users` table to ensure the webhook successfully synced your newly created Clerk user!
+1. Register a new user via Clerk UI.
+2. Confirm the webhook triggers and a new row appears in Supabase `users`.
+3. Confirm RLS blocks unauthenticated access to transactions.
+4. Verify deployment compatibility on Vercel.
