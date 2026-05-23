@@ -305,3 +305,79 @@ SUPABASE_SERVICE_ROLE_KEY=
 - `npm.cmd run build`: Next.js compilation and type checking passed, but prerendering failed because Clerk env is not configured locally:
   - Missing `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` / Clerk publishable key.
   - This matches the existing environment setup note above and is not caused by the Sprint 5 component changes.
+
+---
+
+## SPRINT 6 - MULTI-BANK INGESTION EXPANSION
+
+### Requested Scope
+
+- Refactor PDF parsing into a scalable bank-adapter architecture under `src/lib/parsers/`.
+- Move the existing Kotak multiline aggregation and dynamic debit/credit logic into a dedicated Kotak adapter.
+- Scaffold HDFC, ICICI, and SBI adapters and route PDF parsing through `getParserForBank(bankName)`.
+- Enforce running-balance-based direction resolution across all bank adapters to avoid silent debit/credit ingestion errors.
+
+### Planned Changes
+
+1. `src/lib/parsers/types.ts`
+   - Add `BaseBankParser` and a standard `BankParserTransaction` output contract:
+     - date
+     - amount
+     - direction
+     - raw description
+     - running balance
+
+2. `src/lib/parsers/bankParserUtils.ts`
+   - Add shared date/amount/merchant helpers.
+   - Add central running-balance direction enforcement for all adapters.
+   - Add conversion from bank-adapter rows into existing `NormalizedTransaction` records.
+
+3. `src/lib/parsers/kotakAdapter.ts`
+   - Move Kotak multiline block aggregation out of `pdf-parser.ts`.
+   - Preserve Kotak dynamic debit/credit logic, now through the shared running-balance resolver.
+
+4. `src/lib/parsers/hdfcAdapter.ts`, `src/lib/parsers/iciciAdapter.ts`, `src/lib/parsers/sbiAdapter.ts`
+   - Scaffold adapters implementing `BaseBankParser`.
+   - Use the shared balance-aware generic table parser until bank-specific layouts are refined.
+
+5. `src/lib/parsers/bankParserFactory.ts`
+   - Add `getParserForBank(bankName)` for routing detected banks to their adapters.
+
+6. `src/lib/parsers/pdf-parser.ts`
+   - Reduce PDF parser responsibilities to text extraction, bank detection, adapter routing, and output normalization.
+
+### Completed Changes
+
+- Added `BaseBankParser`, `BankParserContext`, `BankParserResult`, `BankParserTransaction`, and `TransactionDirection` in `src/lib/parsers/types.ts`.
+- Added `src/lib/parsers/bankParserUtils.ts` with shared:
+  - date parsing
+  - numeric cleanup
+  - merchant/payment-method inference
+  - UPI reference handoff
+  - adapter-row to `NormalizedTransaction` conversion
+  - running-balance direction enforcement
+- Extracted Kotak-specific multiline aggregation into `src/lib/parsers/kotakAdapter.ts`.
+- Added adapter stubs for:
+  - `src/lib/parsers/hdfcAdapter.ts`
+  - `src/lib/parsers/iciciAdapter.ts`
+  - `src/lib/parsers/sbiAdapter.ts`
+- Added `src/lib/parsers/bankParserFactory.ts` with `getParserForBank(bankName)`.
+- Refactored `src/lib/parsers/pdf-parser.ts` so it now:
+  - extracts PDF text
+  - detects Kotak/HDFC/ICICI/SBI
+  - routes to the selected bank adapter
+  - normalizes adapter output into the existing ingestion contract
+  - rejects unsupported PDF banks explicitly
+
+### Running Balance Enforcement
+
+- All PDF bank adapters now resolve debit/credit through `resolveDirectionFromRunningBalance`.
+- If a parsed transaction amount does not match the mathematical delta between adjacent running balances, parsing throws a hard error instead of silently ingesting a likely wrong direction.
+- The first row still uses description fallback because there is no prior balance for comparison.
+
+### Verification
+
+- `npx.cmd tsc --noEmit`: passed.
+- `npm.cmd run build`: compilation, linting, and type checking passed, then prerender failed because Clerk env is not configured locally:
+  - Missing Clerk publishable key / `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
+  - This is the same existing environment blocker documented in Sprint 5.

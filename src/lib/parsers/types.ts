@@ -25,3 +25,33 @@ export interface ParserAdapter {
   supportedExtensions: string[];
   parse(fileBuffer: Buffer, filename: string, password?: string): Promise<ParserResult>;
 }
+
+export type TransactionDirection = 'credit' | 'debit';
+
+export interface BankParserTransaction {
+  date: Date;
+  amount: number;
+  direction: TransactionDirection;
+  rawDescription: string;
+  runningBalance: number;
+  rawLine: string;
+  transactionRefId?: string;
+  paymentMethod?: NormalizedTransaction['payment_method'];
+}
+
+export interface BankParserContext {
+  text: string;
+  lines: string[];
+  bankName: string;
+  filename: string;
+}
+
+export interface BankParserResult {
+  transactions: BankParserTransaction[];
+  accountLast4?: string;
+}
+
+export interface BaseBankParser {
+  bankName: string;
+  parse(context: BankParserContext): Promise<BankParserResult> | BankParserResult;
+}
