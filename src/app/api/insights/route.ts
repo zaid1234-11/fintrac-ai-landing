@@ -25,6 +25,9 @@ export async function GET(req: Request) {
 
     return NextResponse.json(insights);
   } catch (error: any) {
+    if (error.message?.includes('Dynamic server usage') || error.digest === 'DYNAMIC_SERVER_USAGE') {
+      throw error;
+    }
     console.error('[Insights API] Unexpected error:', error);
     return NextResponse.json(
       { error: error.message || 'Internal Server Error' },

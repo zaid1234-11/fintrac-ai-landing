@@ -89,6 +89,9 @@ export async function GET(req: Request) {
 
     return NextResponse.json(result);
   } catch (error: any) {
+    if (error.message?.includes('Dynamic server usage') || error.digest === 'DYNAMIC_SERVER_USAGE') {
+      throw error;
+    }
     console.error('[Transactions GET API] Unexpected error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -142,6 +145,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json(transaction);
   } catch (error: any) {
+    if (error.message?.includes('Dynamic server usage') || error.digest === 'DYNAMIC_SERVER_USAGE') {
+      throw error;
+    }
     console.error('[Transactions POST API] Unexpected error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

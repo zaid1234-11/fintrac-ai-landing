@@ -1,6 +1,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
+export const dynamic = "force-dynamic";
+
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 export async function POST(req: Request) {
@@ -62,6 +64,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json(data);
   } catch (error: any) {
+    if (error.message?.includes('Dynamic server usage') || error.digest === 'DYNAMIC_SERVER_USAGE') {
+      throw error;
+    }
     console.error('[OpenRouter Proxy] Unexpected exception:', error);
     return NextResponse.json(
       { error: error.message || 'Internal Server Error' },

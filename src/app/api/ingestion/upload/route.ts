@@ -95,6 +95,9 @@ export async function POST(req: Request) {
       statement,
     });
   } catch (error: any) {
+    if (error.message?.includes('Dynamic server usage') || error.digest === 'DYNAMIC_SERVER_USAGE') {
+      throw error;
+    }
     console.error('[Upload API] Unexpected error:', error);
     return NextResponse.json(
       { error: error.message || 'Internal Server Error during upload' },
