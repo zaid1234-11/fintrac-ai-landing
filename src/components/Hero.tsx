@@ -9,23 +9,23 @@ const Hero = () => {
   const router = useRouter();
 
   return (
-    <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden md:pt-32 md:pb-20">
       {/* Animated Background */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
+        <div className="absolute top-0 left-1/4 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse md:w-96 md:h-96" />
+        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-accent/20 rounded-full blur-3xl animate-pulse [animation-delay:1s] md:w-96 md:h-96" />
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Left: Text Content */}
-          <div className="space-y-8 animate-in fade-in slide-in-from-left duration-1000">
-            <Badge className="bg-primary/10 text-primary border-primary/20 backdrop-blur-sm px-4 py-2 text-sm w-fit">
-              <TrendingUp className="w-4 h-4 mr-2" />
+          <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-left duration-1000">
+            <Badge className="bg-primary/10 text-primary border-primary/20 backdrop-blur-sm px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm w-fit">
+              <TrendingUp className="w-3 h-3 md:w-4 md:h-4 mr-2" />
               Smart Financial Management
             </Badge>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight">
               Your Money,
               <br />
               <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
@@ -33,56 +33,56 @@ const Hero = () => {
               </span>
             </h1>
 
-            <p className="text-xl text-slate-300 max-w-xl">
+            <p className="text-lg md:text-xl text-slate-300 max-w-xl">
               AI-powered personal finance management that helps you save more, spend wisely, and achieve your financial goals faster.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4">
               <Button
                 size="lg"
                 onClick={() => router.push("/dashboard")}
-                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-2xl shadow-primary/30 text-lg px-8 py-6 rounded-2xl group"
+                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-2xl shadow-primary/30 text-base md:text-lg px-6 md:px-8 py-5 md:py-6 rounded-xl md:rounded-2xl group"
               >
                 Get Started Free
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="border-slate-600/50 bg-slate-800/60 backdrop-blur-sm text-slate-200 hover:bg-white/10 hover:border-primary/50 text-lg px-8 py-6 rounded-2xl"
+                className="border-slate-600/50 bg-slate-800/60 backdrop-blur-sm text-slate-200 hover:bg-white/10 hover:border-primary/50 text-base md:text-lg px-6 md:px-8 py-5 md:py-6 rounded-xl md:rounded-2xl"
               >
                 Watch Demo
               </Button>
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex items-center gap-8 pt-8">
+            <div className="flex flex-wrap items-center gap-4 md:gap-8 pt-6 md:pt-8">
               <div className="text-center">
-                <div className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                   10K+
                 </div>
-                <div className="text-sm text-slate-400">Active Users</div>
+                <div className="text-xs md:text-sm text-slate-400">Active Users</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                   4.9/5
                 </div>
-                <div className="text-sm text-slate-400">User Rating</div>
+                <div className="text-xs md:text-sm text-slate-400">User Rating</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                   ₹50Cr+
                 </div>
-                <div className="text-sm text-slate-400">Managed</div>
+                <div className="text-xs md:text-sm text-slate-400">Managed</div>
               </div>
             </div>
           </div>
 
-          {/* Right: 3D Interactive Dashboard Visualization */}
-          <div className="relative animate-in fade-in slide-in-from-right duration-1000 [animation-delay:200ms] perspective-1000">
+          {/* Right: 3D Interactive Dashboard Visualization - Hidden on mobile, shown on lg */}
+          <div className="hidden lg:block relative animate-in fade-in slide-in-from-right duration-1000 [animation-delay:200ms] perspective-1000">
             <div className="relative w-full h-[600px]">
               {/* Main Dashboard Card - Center */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-96 rounded-3xl bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-2xl border border-white/20 shadow-2xl p-6 animate-float z-10 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-primary/30 hover:shadow-2xl hover:border-primary/40 group">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-96 rounded-3xl bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-2xl border border-white/10 shadow-2xl p-8 group hover:-translate-y-1/2 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-x-1/2 transition-all duration-500 animate-float">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors">Total Balance</h3>
@@ -113,7 +113,7 @@ const Hero = () => {
               </div>
 
               {/* Floating Card - Top Right */}
-              <div className="absolute top-8 right-0 w-64 h-32 rounded-2xl bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10 shadow-xl p-4 animate-float-delayed-1 rotate-3 transition-all duration-300 cursor-pointer hover:scale-110 hover:rotate-6 hover:shadow-blue-500/30 hover:shadow-2xl hover:border-blue-500/40 group">
+              <div className="absolute top-8 right-0 w-64 h-32 rounded-2xl bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10 shadow-xl p-6 group hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 animate-float-delayed-1">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Expenses</span>
                   <PieChart className="w-4 h-4 text-blue-400 group-hover:rotate-12 group-hover:scale-125 transition-transform" />
@@ -123,7 +123,7 @@ const Hero = () => {
               </div>
 
               {/* Floating Card - Bottom Left */}
-              <div className="absolute bottom-8 left-0 w-64 h-32 rounded-2xl bg-gradient-to-br from-green-500/20 via-teal-500/20 to-cyan-500/20 backdrop-blur-xl border border-white/10 shadow-xl p-4 animate-float-delayed-2 -rotate-3 transition-all duration-300 cursor-pointer hover:scale-110 hover:-rotate-6 hover:shadow-green-500/30 hover:shadow-2xl hover:border-green-500/40 group">
+              <div className="absolute bottom-8 left-0 w-64 h-32 rounded-2xl bg-gradient-to-br from-green-500/20 via-teal-500/20 to-cyan-500/20 backdrop-blur-xl border border-white/10 shadow-xl p-6 group hover:shadow-2xl hover:shadow-green-500/20 transition-all duration-500 animate-float-delayed-2">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Savings</span>
                   <BarChart3 className="w-4 h-4 text-green-400 group-hover:rotate-12 group-hover:scale-125 transition-transform" />
@@ -133,7 +133,7 @@ const Hero = () => {
               </div>
 
               {/* Floating Card - Top Left */}
-              <div className="absolute top-16 left-12 w-48 h-24 rounded-xl bg-gradient-to-br from-orange-500/20 via-red-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10 shadow-xl p-3 animate-float-delayed-3 -rotate-6 transition-all duration-300 cursor-pointer hover:scale-110 hover:-rotate-12 hover:shadow-orange-500/30 hover:shadow-2xl hover:border-orange-500/40 group">
+              <div className="absolute top-16 left-12 w-48 h-24 rounded-xl bg-gradient-to-br from-orange-500/20 via-red-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10 shadow-xl p-3 group hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-500 animate-float-delayed-3">
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse group-hover:scale-150 transition-transform" />
                   <span className="text-xs text-slate-300 group-hover:text-white transition-colors">AI Active</span>
@@ -142,7 +142,7 @@ const Hero = () => {
               </div>
 
               {/* Floating Card - Bottom Right */}
-              <div className="absolute bottom-16 right-12 w-48 h-24 rounded-xl bg-gradient-to-br from-purple-500/20 via-indigo-500/20 to-blue-500/20 backdrop-blur-xl border border-white/10 shadow-xl p-3 animate-float-delayed-4 rotate-6 transition-all duration-300 cursor-pointer hover:scale-110 hover:rotate-12 hover:shadow-purple-500/30 hover:shadow-2xl hover:border-purple-500/40 group">
+              <div className="absolute bottom-16 right-12 w-48 h-24 rounded-xl bg-gradient-to-br from-purple-500/20 via-indigo-500/20 to-blue-500/20 backdrop-blur-xl border border-white/10 shadow-xl p-3 group hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 animate-float-delayed-4">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingUp className="w-3 h-3 text-primary group-hover:rotate-12 group-hover:scale-125 transition-transform" />
                   <span className="text-xs text-slate-300 group-hover:text-white transition-colors">Investments</span>
@@ -152,6 +152,34 @@ const Hero = () => {
 
               {/* Glow Effects */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+            </div>
+          </div>
+
+          {/* Mobile Dashboard Summary */}
+          <div className="lg:hidden space-y-4">
+            <div className="rounded-2xl bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-2xl border border-white/10 shadow-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-white">Total Balance</h3>
+                <Wallet className="w-5 h-5 text-primary" />
+              </div>
+              <div className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+                ₹2,45,890
+              </div>
+              <div className="flex items-center gap-2 text-sm text-green-400">
+                <TrendingUp className="w-4 h-4" />
+                <span>+12.5% this month</span>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl border border-white/10 p-4">
+                <div className="text-xs text-slate-400 mb-2">Expenses</div>
+                <div className="text-xl font-bold text-white">₹45,200</div>
+              </div>
+              <div className="rounded-xl bg-gradient-to-br from-green-500/20 to-teal-500/20 backdrop-blur-xl border border-white/10 p-4">
+                <div className="text-xs text-slate-400 mb-2">Savings</div>
+                <div className="text-xl font-bold text-white">₹1,24,500</div>
+              </div>
             </div>
           </div>
         </div>
