@@ -2,53 +2,7 @@ import { inngest } from './inngest-client';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { downloadStatementAdmin } from '@/lib/storage/actions';
 import { parserRegistry } from '@/lib/parsers/registry';
-import { runAIPipeline } from '@/lib/ai/pipeline';
-
-/**
- * Helper to check or create a transaction category dynamically to avoid foreign key errors
- */
-async function getOrCreateCategory(
-  supabase: any,
-  userId: string,
-  categoryName: string,
-  type: 'credit' | 'debit'
-): Promise<string | null> {
-  try {
-    // Look for existing category (either system/global with user_id null OR matching this user)
-    const { data, error } = await supabase
-      .from('categories')
-      .select('id')
-      .eq('name', categoryName)
-      .eq('type', type)
-      .or(`user_id.is.null,user_id.eq.${userId}`)
-      .limit(1);
-
-    if (error) throw error;
-
-    if (data && data.length > 0) {
-      return data[0].id;
-    }
-
-    // Insert user-scoped category if not exists
-    const { data: newCat, error: insertError } = await supabase
-      .from('categories')
-      .insert({
-        user_id: userId,
-        name: categoryName,
-        type,
-        icon: categoryName.charAt(0).toUpperCase() + categoryName.slice(1).toLowerCase(), // Default icon name
-        color: type === 'credit' ? '#10b981' : '#6366f1', // Green for credit, violet for debit
-      })
-      .select('id')
-      .single();
-
-    if (insertError) throw insertError;
-    return newCat?.id || null;
-  } catch (err) {
-    console.error(`[getOrCreateCategory] Failed for "${categoryName}":`, err);
-    return null;
-  }
-}
+import { chunkTransactions, persistTransactionChunk } from '@/lib/ingestion/chunkPersistence';
 
 /**
  * Unified Multi-step Ingest Flow
@@ -114,114 +68,34 @@ export const processStatementUpload = inngest.createFunction(
         return { success: true, count: 0 };
       }
 
-      // 4. Clean, Canonicalize, and Classify transactions through our multi-stage pipeline
-      const classifiedTransactions = await step.run('classify-transactions', async () => {
-        const { classifyTransaction } = require('@/lib/ai/classifierPipeline');
-        const results = [];
-        
-        for (const rawTx of parseResult.transactions) {
-          const originalDesc = rawTx.raw_payload?.original_description || rawTx.merchant;
-          const result = await classifyTransaction(
-            supabase,
-            userId,
-            originalDesc,
-            rawTx.amount,
-            rawTx.transaction_type
-          );
-          results.push(result);
-        }
-        return results;
-      });
-
-      // 5. Insert Normalized and Categorized transactions into Supabase DB
-      const savedCount = await step.run('save-transactions-to-db', async () => {
+      // 4. Insert normalized transactions in deterministic 25-row chunks.
+      // AI behavioral generation runs only after all chunks are persisted.
+      const savedCount = await step.run('save-transactions-in-chunks', async () => {
         let count = 0;
+        const chunks = chunkTransactions(parseResult.transactions);
 
-        for (let i = 0; i < parseResult.transactions.length; i++) {
-          const rawTx = parseResult.transactions[i];
-          const classResult = classifiedTransactions[i];
-          
-          const categoryName = classResult.category || 'Other';
-          const merchantName = classResult.merchant || 'General Merchant';
-          const confidence = classResult.confidence ?? 0.5;
-          const desc = rawTx.raw_payload?.original_description || 'Statement transaction';
-          const source = classResult.source || 'fallback_other';
-
-          // Resolve category UUID
-          const categoryId = await getOrCreateCategory(
+        for (let i = 0; i < chunks.length; i++) {
+          const result = await persistTransactionChunk({
             supabase,
             userId,
-            categoryName,
-            rawTx.transaction_type
-          );
+            statementId,
+            transactions: chunks[i],
+          });
 
-          // Prep transaction record
-          const { data: newTx, error: insertErr } = await supabase
-            .from('transactions')
-            .insert({
-              user_id: userId,
-              category_id: categoryId,
-              amount: rawTx.amount,
-              currency: rawTx.currency || 'INR',
-              type: rawTx.transaction_type,
-              status: 'completed',
-              merchant_name: merchantName,
-              upi_id: rawTx.transaction_ref_id || null,
-              description: desc,
-              date: rawTx.timestamp,
-              ai_confidence_score: confidence,
-              classification_source: source,
-              normalized_merchant: merchantName,
-              raw_parsed_data: {
-                ...rawTx.raw_payload,
-                ai_categorization: {
-                  category: categoryName,
-                  confidence,
-                  classification_source: source,
-                  is_recurring: source === 'merchant_memory' || source === 'global_registry',
-                },
-              },
-              source: 'statement',
-              source_id: statementId,
-            })
-            .select('id')
-            .single();
-
-          if (insertErr) {
-            console.error('[Ingest Save Error]:', insertErr);
-          } else if (newTx) {
-            count++;
-            
-            // Record detailed classification history/audit
-            const { error: classErr } = await supabase
-              .from('transaction_classifications')
-              .insert({
-                transaction_id: newTx.id,
-                raw_description: rawTx.raw_payload?.original_description || rawTx.merchant,
-                cleaned_description: classResult.cleanedDescription,
-                resolved_merchant: merchantName,
-                category: categoryName,
-                confidence_score: confidence,
-                classification_source: source,
-                rule_matched: classResult.ruleMatched || null,
-              });
-              
-            if (classErr) {
-              console.error('[Classification Log Error]:', classErr);
-            }
-          }
+          count += result.savedCount;
+          console.log(`[Ingest] Persisted chunk ${i + 1}/${chunks.length}: ${result.savedCount}/${chunks[i].length}`);
         }
 
         return count;
       });
 
-      // 6. Generate Behavioral Insights
+      // 5. Generate Behavioral Insights after all chunks are persisted.
       await step.run('generate-behavioral-insights', async () => {
         const { generateBehavioralInsights } = require('@/lib/ai/behavioralIntel');
         await generateBehavioralInsights(supabase, userId);
       });
 
-      // 7. Update bank statement record to 'completed'
+      // 6. Update bank statement record to 'completed'
       await step.run('finalize-statement-record', async () => {
         const accountInfo = parseResult.accountLast4 || '****';
         const bankName = parseResult.bankName || 'Detected Bank';

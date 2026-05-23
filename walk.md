@@ -416,3 +416,47 @@ SUPABASE_SERVICE_ROLE_KEY=
 - `npm.cmd run build`: compilation, linting, and type checking passed, then prerender failed because Clerk env is not configured locally:
   - Missing Clerk publishable key / `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
   - This is the same existing environment blocker documented in Sprint 5 and Sprint 6.
+
+---
+
+## Chunked Ingestion Split
+
+### Requested Scope
+
+- Avoid sending or processing one massive parsed transaction array in a single request.
+- Slice parsed rows into batches of 25.
+- Separate transaction insertion from behavioral insight generation.
+
+### Completed Changes
+
+- Added `src/lib/ingestion/constants.ts` with `INGESTION_BATCH_SIZE = 25`.
+- Added `src/lib/ingestion/clientChunkUpload.ts` with `processInChunks(parsedRows, options)`:
+  - slices rows into 25-row batches
+  - posts each batch to `/api/upload/chunk`
+  - emits log/progress callbacks
+  - calls `/api/insights/generate` after all chunks finish
+- Added `src/lib/ingestion/chunkPersistence.ts`:
+  - persists a 25-row transaction chunk
+  - runs deterministic merchant/category normalization only
+  - avoids LLM calls during chunk insertion
+  - writes transaction classification audit records
+- Added `src/app/api/upload/chunk/route.ts`:
+  - authenticated chunk endpoint
+  - rejects chunks larger than 25 rows
+  - inserts normalized transaction chunks into Supabase
+- Added `src/app/api/insights/generate/route.ts`:
+  - authenticated final insight-generation endpoint
+  - runs `generateBehavioralInsights` after chunk insertion is complete
+- Refactored `src/lib/jobs/functions.ts` so server-side PDF ingestion now persists parsed transactions in 25-row chunks before running behavioral insight generation.
+
+### Architecture Note
+
+- The current app does not parse PDFs in `TransactionUpload.tsx`; PDF parsing happens in the server-side Inngest flow.
+- Because of that, chunking was implemented at the actual parsed-row boundary in the background ingestion job and exposed as reusable API/client helpers for any future frontend-side parser.
+
+### Verification
+
+- `npx.cmd tsc --noEmit`: passed.
+- `npm.cmd run build`: compilation, linting, and type checking passed, then prerender failed because Clerk env is not configured locally:
+  - Missing Clerk publishable key / `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
+  - This is the same existing environment blocker documented in prior phases.
