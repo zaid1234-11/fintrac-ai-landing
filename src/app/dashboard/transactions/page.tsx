@@ -28,6 +28,13 @@ import {
   Home,
   HelpCircle,
   Plus,
+  Activity,
+  Fuel,
+  BookOpen,
+  Wallet,
+  TrendingUp,
+  Send,
+  ArrowLeftRight,
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -39,15 +46,23 @@ import { TransactionUpload } from "@/components/dashboard/TransactionUpload";
 const categoryIcons: { [key: string]: React.ElementType } = {
   Food: Utensils,
   Travel: Plane,
-  Bills: Receipt,
   Shopping: ShoppingBag,
+  Groceries: ShoppingBag,
+  Bills: Receipt,
+  Recharge: Send,
   Entertainment: Clapperboard,
-  Salary: Home,
+  Health: Activity,
+  Fuel: Fuel,
+  Education: BookOpen,
+  Rent: Home,
+  Salary: Wallet,
+  Investment: TrendingUp,
+  Transfer: ArrowLeftRight,
   Other: HelpCircle,
 };
 
 const TransactionsPage = () => {
-  const { transactions, addTransaction, refreshTransactions } = useTransactions();
+  const { transactions, addTransaction, refreshTransactions, correctTransactionCategory } = useTransactions();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "debit" | "credit">("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -343,9 +358,40 @@ const TransactionsPage = () => {
                       <p className={`font-bold text-lg ${amountColor} flex items-center justify-end gap-1`}>
                         <Icon className="w-4 h-4" />₹{t.amount.toLocaleString("en-IN")}
                       </p>
-                      <Badge variant="secondary" className="mt-1 text-xs bg-slate-700/50 text-slate-200 border-slate-600">
-                        {t.category}
-                      </Badge>
+                      <div className="mt-1 flex items-center justify-end gap-1.5 flex-wrap">
+                        <Badge variant="outline" className={`text-[10px] px-1.5 py-0.5 border-slate-700 ${
+                          t.classification_source === 'merchant_memory' ? 'bg-cyan-500/10 text-cyan-400' :
+                          t.classification_source === 'global_registry' ? 'bg-blue-500/10 text-blue-400' :
+                          t.classification_source === 'rules' ? 'bg-green-500/10 text-green-400' :
+                          t.classification_source === 'fuzzy_match' ? 'bg-amber-500/10 text-amber-400' :
+                          t.classification_source === 'ai' ? 'bg-purple-500/10 text-purple-400' :
+                          t.classification_source === 'manual' ? 'bg-pink-500/10 text-pink-400' :
+                          'bg-slate-500/10 text-slate-400'
+                        }`}>
+                          {t.classification_source === 'merchant_memory' ? 'Memory' :
+                           t.classification_source === 'global_registry' ? 'Registry' :
+                           t.classification_source === 'rules' ? 'Rules' :
+                           t.classification_source === 'fuzzy_match' ? 'Fuzzy' :
+                           t.classification_source === 'ai' ? `AI (${Math.round((t.ai_confidence_score ?? 0.8) * 100)}%)` :
+                           t.classification_source === 'manual' ? 'Manual' :
+                           'Fallback'}
+                        </Badge>
+                        <Select 
+                          value={t.category} 
+                          onValueChange={(newCat) => correctTransactionCategory(t.id, newCat)}
+                        >
+                          <SelectTrigger className="h-6 w-[120px] bg-slate-800/60 border-slate-700 text-xs text-slate-200 focus:ring-0 focus:ring-offset-0">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.keys(categoryIcons).map((cat) => (
+                              <SelectItem key={cat} value={cat} className="text-xs">
+                                {cat}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </Card>
                 );

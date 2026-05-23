@@ -7,7 +7,6 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTransactions } from "@/contexts/TransactionContext";
 
-
 interface Insight {
   id: string;
   type: "warning" | "success" | "info";
@@ -24,19 +23,16 @@ export const AIInsights = () => {
   const router = useRouter();
   const { transactions, lastUpdated } = useTransactions();
 
-  // Calculate insights from real transaction data
+  // Calculate insights from real transaction data (fallback local heuristics)
   const generateInsights = useMemo(() => {
-    // If no transactions, return empty
     if (transactions.length === 0) return [];
 
-    // Get the most recent month with transactions
     const sortedTransactions = [...transactions].sort((a, b) => 
       new Date(b.date).getTime() - new Date(a.date).getTime()
     );
     
     const latestDate = new Date(sortedTransactions[0].date);
     
-    // Get current period transactions (last 30 days from latest transaction)
     const thirtyDaysAgo = new Date(latestDate);
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
@@ -45,7 +41,6 @@ export const AIInsights = () => {
       return date >= thirtyDaysAgo && date <= latestDate && t.type === 'debit';
     });
 
-    // Get previous period (31-60 days ago)
     const sixtyDaysAgo = new Date(latestDate);
     sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
     
@@ -54,7 +49,6 @@ export const AIInsights = () => {
       return date >= sixtyDaysAgo && date < thirtyDaysAgo && t.type === 'debit';
     });
 
-    // Calculate spending by category
     const currentSpending: Record<string, number> = {};
     const previousSpending: Record<string, number> = {};
 
@@ -68,14 +62,11 @@ export const AIInsights = () => {
 
     const newInsights: Insight[] = [];
 
-    // If we have current spending data
     if (Object.keys(currentSpending).length > 0) {
-      // Check for overspending in each category
       Object.keys(currentSpending).forEach((category, index) => {
         const current = currentSpending[category];
         const previous = previousSpending[category] || 0;
         
-        // Skip salary category
         if (category === 'Salary') return;
         
         if (previous > 0) {
@@ -102,7 +93,6 @@ export const AIInsights = () => {
             });
           }
         } else {
-          // New category spending
           newInsights.push({
             id: `insight-new-${index}`,
             type: "info",
@@ -114,7 +104,6 @@ export const AIInsights = () => {
         }
       });
 
-      // Add general spending insight
       const totalCurrent = Object.values(currentSpending).reduce((sum, val) => sum + val, 0);
       const totalPrevious = Object.values(previousSpending).reduce((sum, val) => sum + val, 0);
       
@@ -143,7 +132,6 @@ export const AIInsights = () => {
         }
       }
 
-      // Check most expensive category
       const maxCategory = Object.entries(currentSpending).reduce((max, [cat, amt]) => 
         amt > max.amount ? { category: cat, amount: amt } : max
       , { category: '', amount: 0 });
@@ -163,18 +151,44 @@ export const AIInsights = () => {
     return newInsights;
   }, [transactions]);
 
-  const analyzeSpending = () => {
+  const analyzeSpending = async () => {
     setIsAnalyzing(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/insights');
+      if (!res.ok) throw new Error('Failed to fetch insights');
+      const data = await res.json();
+      
+      if (data && data.length > 0) {
+        const mapped = data.map((t: any) => {
+          let uiType: 'warning' | 'success' | 'info' = 'info';
+          if (t.type === 'anomaly') uiType = 'warning';
+          else if (t.type === 'recommendation') uiType = 'success';
+
+          return {
+            id: t.id,
+            type: uiType,
+            category: t.type.replace('_', ' ').toUpperCase(),
+            title: t.title,
+            description: t.description,
+            amount: t.metrics?.total || t.metrics?.salarySum || t.metrics?.currentTotal || undefined,
+            recommendation: t.type === 'recommendation' ? t.description : undefined
+          };
+        });
+        setInsights(mapped);
+      } else {
+        setInsights(generateInsights);
+      }
+    } catch (e) {
+      console.error('[AIInsights] Error loading DB insights:', e);
       setInsights(generateInsights);
+    } finally {
       setIsAnalyzing(false);
-    }, 1500);
+    }
   };
 
-  // Auto-analyze when transactions change
   useEffect(() => {
     analyzeSpending();
-  }, [lastUpdated, generateInsights]);
+  }, [lastUpdated]);
 
   const getIcon = (type: string) => {
     switch (type) {

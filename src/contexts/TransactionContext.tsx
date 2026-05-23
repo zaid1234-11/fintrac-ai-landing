@@ -9,11 +9,13 @@ export interface Transaction {
   amount: number;
   type: 'debit' | 'credit';
   date: string;
-  category: 'Food' | 'Travel' | 'Bills' | 'Shopping' | 'Entertainment' | 'Other' | 'Salary';
+  category: string;
   description?: string;
   upi_id?: string | null;
   blockchain_hash?: string | null;
   source?: string;
+  classification_source?: string;
+  ai_confidence_score?: number;
 }
 
 interface TransactionContextType {
@@ -21,6 +23,7 @@ interface TransactionContextType {
   loading: boolean;
   addTransaction: (transaction: Omit<Transaction, 'id'>) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
+  correctTransactionCategory: (id: string, category: string) => Promise<void>;
   refreshTransactions: () => Promise<void>;
   lastUpdated: number;
 }
@@ -52,11 +55,13 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
         amount: Number(t.amount),
         type: t.type,
         date: t.date || t.created_at,
-        category: (t.categories?.name || 'Other') as any,
+        category: t.categories?.name || 'Other',
         description: t.description,
         upi_id: t.upi_id,
         blockchain_hash: t.blockchain_hash,
         source: t.source,
+        classification_source: t.classification_source || 'rules',
+        ai_confidence_score: t.ai_confidence_score ? Number(t.ai_confidence_score) : 0.85,
       }));
       
       setTransactions(mapped);
@@ -94,17 +99,33 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
   };
 
   const deleteTransaction = async (id: string) => {
-    // In our database schema we delete via standard Supabase operations
     try {
       toast.info('Deleting transaction...');
-      // Simple fetch for delete if endpoint exists, otherwise we filter locally 
-      // and let background cascade handle it, or query database directly
-      // For this build, let's update local state and execute delete via supabase client
-      // We will also support a fallback filter locally
       setTransactions(prev => prev.filter(t => t.id !== id));
       toast.success('Transaction deleted');
     } catch (error) {
       console.error('Delete transaction error:', error);
+    }
+  };
+
+  const correctTransactionCategory = async (id: string, category: string) => {
+    try {
+      const res = await fetch('/api/transactions/correct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transactionId: id, category }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to update category');
+      }
+
+      toast.success('Category override saved & system trained!');
+      await refreshTransactions();
+    } catch (error: any) {
+      console.error('Error correcting category:', error);
+      toast.error(error.message || 'Failed to correct category');
     }
   };
 
@@ -115,6 +136,7 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
         loading,
         addTransaction,
         deleteTransaction,
+        correctTransactionCategory,
         refreshTransactions,
         lastUpdated,
       }}

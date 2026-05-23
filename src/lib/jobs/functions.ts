@@ -114,34 +114,39 @@ export const processStatementUpload = inngest.createFunction(
         return { success: true, count: 0 };
       }
 
-      // 4. Enrich transactions via AI (OpenRouter batch call)
-      const aiEnrichments = await step.run('run-ai-enrichment', async () => {
-        // Re-map string ISO dates back to Date objects for prompt logic if needed
-        const normalTransactions = parseResult.transactions.map((t: any) => ({
-          ...t,
-          timestamp: new Date(t.timestamp),
-        }));
-
-        // Call OpenRouter pipeline
-        const aiResponse = await runAIPipeline(normalTransactions);
-        return aiResponse;
+      // 4. Clean, Canonicalize, and Classify transactions through our multi-stage pipeline
+      const classifiedTransactions = await step.run('classify-transactions', async () => {
+        const { classifyTransaction } = require('@/lib/ai/classifierPipeline');
+        const results = [];
+        
+        for (const rawTx of parseResult.transactions) {
+          const originalDesc = rawTx.raw_payload?.original_description || rawTx.merchant;
+          const result = await classifyTransaction(
+            supabase,
+            userId,
+            originalDesc,
+            rawTx.amount,
+            rawTx.transaction_type
+          );
+          results.push(result);
+        }
+        return results;
       });
 
-      // 5. Insert Normalized and AI-Categorized transactions into Supabase DB
+      // 5. Insert Normalized and Categorized transactions into Supabase DB
       const savedCount = await step.run('save-transactions-to-db', async () => {
         let count = 0;
 
         for (let i = 0; i < parseResult.transactions.length; i++) {
           const rawTx = parseResult.transactions[i];
+          const classResult = classifiedTransactions[i];
           
-          // Find corresponding AI classification
-          const aiInfo = aiEnrichments.transactions.find((ai: any) => ai.index === i);
-          
-          const categoryName = aiInfo?.category || rawTx.category || 'Other';
-          const merchantName = aiInfo?.merchant || rawTx.merchant || 'General Merchant';
-          const confidence = aiInfo?.ai_confidence_score ?? 0.7;
-          const desc = aiInfo?.description || rawTx.raw_payload?.original_description || 'Statement transaction';
-          
+          const categoryName = classResult.category || 'Other';
+          const merchantName = classResult.merchant || 'General Merchant';
+          const confidence = classResult.confidence ?? 0.5;
+          const desc = rawTx.raw_payload?.original_description || 'Statement transaction';
+          const source = classResult.source || 'fallback_other';
+
           // Resolve category UUID
           const categoryId = await getOrCreateCategory(
             supabase,
@@ -151,54 +156,69 @@ export const processStatementUpload = inngest.createFunction(
           );
 
           // Prep transaction record
-          const { error } = await supabase.from('transactions').insert({
-            user_id: userId,
-            category_id: categoryId,
-            amount: rawTx.amount,
-            currency: rawTx.currency || 'INR',
-            type: rawTx.transaction_type,
-            status: 'completed',
-            merchant_name: merchantName,
-            upi_id: rawTx.transaction_ref_id || null,
-            description: desc,
-            date: rawTx.timestamp,
-            ai_confidence_score: confidence,
-            raw_parsed_data: {
-              ...rawTx.raw_payload,
-              ai_categorization: {
-                category: categoryName,
-                confidence,
-                is_recurring: aiInfo?.is_recurring || false,
+          const { data: newTx, error: insertErr } = await supabase
+            .from('transactions')
+            .insert({
+              user_id: userId,
+              category_id: categoryId,
+              amount: rawTx.amount,
+              currency: rawTx.currency || 'INR',
+              type: rawTx.transaction_type,
+              status: 'completed',
+              merchant_name: merchantName,
+              upi_id: rawTx.transaction_ref_id || null,
+              description: desc,
+              date: rawTx.timestamp,
+              ai_confidence_score: confidence,
+              classification_source: source,
+              normalized_merchant: merchantName,
+              raw_parsed_data: {
+                ...rawTx.raw_payload,
+                ai_categorization: {
+                  category: categoryName,
+                  confidence,
+                  classification_source: source,
+                  is_recurring: source === 'merchant_memory' || source === 'global_registry',
+                },
               },
-            },
-            source: 'statement',
-            source_id: statementId,
-          });
+              source: 'statement',
+              source_id: statementId,
+            })
+            .select('id')
+            .single();
 
-          if (error) {
-            console.error('[Ingest Save Error]:', error);
-          } else {
+          if (insertErr) {
+            console.error('[Ingest Save Error]:', insertErr);
+          } else if (newTx) {
             count++;
+            
+            // Record detailed classification history/audit
+            const { error: classErr } = await supabase
+              .from('transaction_classifications')
+              .insert({
+                transaction_id: newTx.id,
+                raw_description: rawTx.raw_payload?.original_description || rawTx.merchant,
+                cleaned_description: classResult.cleanedDescription,
+                resolved_merchant: merchantName,
+                category: categoryName,
+                confidence_score: confidence,
+                classification_source: source,
+                rule_matched: classResult.ruleMatched || null,
+              });
+              
+            if (classErr) {
+              console.error('[Classification Log Error]:', classErr);
+            }
           }
         }
 
         return count;
       });
 
-      // 6. Save AI Insights
-      await step.run('save-ai-insights', async () => {
-        if (aiEnrichments.insights && aiEnrichments.insights.length > 0) {
-          for (const insight of aiEnrichments.insights) {
-            await supabase.from('ai_insights').insert({
-              user_id: userId,
-              type: insight.type,
-              title: insight.title,
-              description: insight.description,
-              metrics: insight.metrics || {},
-              insight_date: new Date().toISOString().split('T')[0],
-            });
-          }
-        }
+      // 6. Generate Behavioral Insights
+      await step.run('generate-behavioral-insights', async () => {
+        const { generateBehavioralInsights } = require('@/lib/ai/behavioralIntel');
+        await generateBehavioralInsights(supabase, userId);
       });
 
       // 7. Update bank statement record to 'completed'
