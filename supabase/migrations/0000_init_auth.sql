@@ -18,11 +18,13 @@ ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
 -- 3. Create RLS Policies
 -- Users can read their own data. We match the JWT 'sub' claim (which Clerk sets to the user ID) against `clerk_user_id`
+DROP POLICY IF EXISTS "Users can view their own profile" ON public.users;
 CREATE POLICY "Users can view their own profile"
   ON public.users
   FOR SELECT
   USING (auth.jwt() ->> 'sub' = clerk_user_id);
 
+DROP POLICY IF EXISTS "Users can update their own profile" ON public.users;
 CREATE POLICY "Users can update their own profile"
   ON public.users
   FOR UPDATE
@@ -44,6 +46,7 @@ CREATE TABLE IF NOT EXISTS public.transactions (
 
 ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view their own transactions" ON public.transactions;
 CREATE POLICY "Users can view their own transactions"
   ON public.transactions
   FOR SELECT
