@@ -7,13 +7,26 @@ const isProtectedRoute = createRouteMatcher([
   '/api/secure(.*)'
 ])
 
-export default clerkMiddleware(async (auth, req) => {
-  // If the user is trying to access a protected route and is not logged in,
-  // this will redirect them to the Clerk Sign In page.
-  if (isProtectedRoute(req)) {
-    await auth.protect()
+export default clerkMiddleware(
+  async (auth, req) => {
+    // If the user is trying to access a protected route and is not logged in,
+    // this will redirect them to the Clerk Sign In page.
+    if (isProtectedRoute(req)) {
+      await auth.protect()
+    }
+  },
+  {
+    // Temporarily allow `unsafe-eval` in the `script-src` directive to
+    // prevent CSP errors from third-party client-side packages that rely
+    // on `eval`. Remove this once the offending package is replaced or
+    // updated to avoid using `eval` in production.
+    contentSecurityPolicy: {
+      directives: {
+        'script-src': ["'unsafe-eval'"]
+      }
+    }
   }
-})
+)
 
 export const config = {
   matcher: [
