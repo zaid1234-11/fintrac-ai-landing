@@ -2,10 +2,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Sparkles, TrendingUp, AlertTriangle, Lightbulb, ArrowRight } from "lucide-react";
+import { Sparkles, TrendingUp, AlertTriangle, Lightbulb, ArrowRight, HelpCircle } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTransactions } from "@/contexts/TransactionContext";
+import { InsightExplainabilityModal } from "./InsightExplainabilityModal";
 
 interface Insight {
   id: string;
@@ -20,6 +21,8 @@ interface Insight {
 export const AIInsights = () => {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [selectedInsightId, setSelectedInsightId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const { transactions, lastUpdated } = useTransactions();
 
@@ -212,6 +215,11 @@ export const AIInsights = () => {
     }
   };
 
+  const handleExplainClick = (insightId: string) => {
+    setSelectedInsightId(insightId);
+    setIsModalOpen(true);
+  };
+
   return (
     <Card className="col-span-1">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -286,15 +294,24 @@ export const AIInsights = () => {
                       </p>
                     </div>
                   )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mt-2 text-xs text-muted-foreground hover:text-primary"
+                    onClick={() => handleExplainClick(insight.id)}
+                  >
+                    <HelpCircle className="h-3 w-3 mr-1" />
+                    Why this claim?
+                  </Button>
                 </div>
               </div>
             </div>
           ))}
 
           {insights.length > 0 && (
-            <Button 
-              variant="outline" 
-              className="w-full mt-4" 
+            <Button
+              variant="outline"
+              className="w-full mt-4"
               size="sm"
               onClick={() => router.push('/dashboard/ai-analysis')}
             >
@@ -304,6 +321,12 @@ export const AIInsights = () => {
           )}
         </div>
       </CardContent>
+
+      <InsightExplainabilityModal
+        insightId={selectedInsightId}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+      />
     </Card>
   );
 };
