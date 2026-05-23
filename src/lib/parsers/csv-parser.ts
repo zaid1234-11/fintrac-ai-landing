@@ -6,7 +6,7 @@ export class CSVBankStatementParser implements ParserAdapter {
   name = 'csv-bank-statement';
   supportedExtensions = ['.csv'];
 
-  async parse(fileBuffer: Buffer, filename: string): Promise<ParserResult> {
+  async parse(fileBuffer: Buffer, filename: string, password?: string): Promise<ParserResult> {
     try {
       const csvText = fileBuffer.toString('utf8');
       

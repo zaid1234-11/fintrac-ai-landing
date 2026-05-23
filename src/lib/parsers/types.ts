@@ -23,5 +23,5 @@ export interface ParserResult {
 export interface ParserAdapter {
   name: string;
   supportedExtensions: string[];
-  parse(fileBuffer: Buffer, filename: string): Promise<ParserResult>;
+  parse(fileBuffer: Buffer, filename: string, password?: string): Promise<ParserResult>;
 }

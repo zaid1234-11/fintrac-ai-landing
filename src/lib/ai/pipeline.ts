@@ -36,13 +36,31 @@ export interface AIPipelineResponse {
 export async function runAIPipeline(
   transactions: NormalizedTransaction[]
 ): Promise<AIPipelineResponse> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
-    throw new Error('OPENROUTER_API_KEY is not defined in the environment variables.');
-  }
-
   if (transactions.length === 0) {
     return { transactions: [], insights: [] };
+  }
+
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    console.warn('[AI Pipeline Warning] OPENROUTER_API_KEY is not defined. Falling back to local rule-based categorization.');
+    return {
+      transactions: transactions.map((t, idx) => ({
+        index: idx,
+        merchant: t.merchant,
+        category: fallbackCategory(t.merchant),
+        is_recurring: false,
+        ai_confidence_score: 0.5,
+        description: `Parsed transaction for ${t.merchant}`,
+      })),
+      insights: [
+        {
+          type: 'recommendation',
+          title: 'AI Insights Offline',
+          description: 'We are currently listing your transactions using rule-based categories. Standard insights will resume shortly.',
+          metrics: { error: true },
+        },
+      ],
+    };
   }
 
   // 1. Format input records for the LLM context to minimize tokens

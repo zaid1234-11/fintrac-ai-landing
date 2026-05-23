@@ -4,6 +4,8 @@ import { uploadStatement } from '@/lib/storage/actions';
 import { createClient } from '@/lib/supabase/server';
 import { inngest } from '@/lib/jobs/inngest-client';
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   try {
     // 1. Authenticate user
@@ -15,6 +17,7 @@ export async function POST(req: Request) {
     // 2. Parse request form data
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
+    const password = formData.get('password') as string || '';
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -82,6 +85,7 @@ export async function POST(req: Request) {
         statementId: statement.id,
         filePath: uploadResult.filePath,
         filename: file.name,
+        password,
       },
     });
 

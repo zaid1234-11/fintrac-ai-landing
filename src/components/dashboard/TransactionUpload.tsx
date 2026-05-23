@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Upload, FileText, CheckCircle, X, Loader2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface TransactionUploadProps {
   onUploadSuccess: () => void;
@@ -14,6 +16,7 @@ interface TransactionUploadProps {
 export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [password, setPassword] = useState('');
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [statusText, setStatusText] = useState('');
@@ -79,6 +82,9 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      if (password) {
+        formData.append('password', password);
+      }
 
       const res = await fetch('/api/ingestion/upload', {
         method: 'POST',
@@ -139,6 +145,7 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
           // Short delay to let user see progress complete
           setTimeout(() => {
             setFile(null);
+            setPassword('');
             setUploading(false);
             setProgress(0);
             setStatusText('');
@@ -147,7 +154,7 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
 
         } else if (activeStatement.status === 'failed') {
           clearInterval(interval);
-          throw new Error('The document layout could not be parsed correctly. Enter manually or try another statement.');
+          throw new Error(activeStatement.error_message || 'The document layout could not be parsed correctly. Enter manually or try another statement.');
         } else {
           // Increment progress slightly during ingestion steps
           setProgress(prev => Math.min(prev + 5, 95));
@@ -179,6 +186,7 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
 
   const clearFile = () => {
     setFile(null);
+    setPassword('');
   };
 
   return (
@@ -238,6 +246,26 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
                 </button>
               )}
             </div>
+
+            {file && (file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf') && (
+              <div className="space-y-1.5 px-1">
+                <Label htmlFor="pdf-password" className="text-slate-300 text-xs font-semibold">
+                  Statement Password (Optional)
+                </Label>
+                <Input
+                  id="pdf-password"
+                  type="password"
+                  placeholder="Enter PDF password if locked"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-slate-950/40 border-white/10 text-white placeholder-slate-500 focus:border-primary/50 text-sm"
+                  disabled={uploading}
+                />
+                <p className="text-slate-400 text-[10px] italic">
+                  Note: HDFC and ICICI statements are usually password-protected.
+                </p>
+              </div>
+            )}
 
             {uploading ? (
               <div className="space-y-3">

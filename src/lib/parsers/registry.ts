@@ -16,7 +16,7 @@ export class ParserRegistry {
     this.adapters.push(adapter);
   }
 
-  async parseFile(fileBuffer: Buffer, filename: string): Promise<ParserResult> {
+  async parseFile(fileBuffer: Buffer, filename: string, password?: string): Promise<ParserResult> {
     const ext = path.extname(filename).toLowerCase();
     
     // Find matching adapter
@@ -32,7 +32,7 @@ export class ParserRegistry {
 
     try {
       console.log(`[ParserRegistry] Parsing ${filename} using ${adapter.name}...`);
-      return await adapter.parse(fileBuffer, filename);
+      return await adapter.parse(fileBuffer, filename, password);
     } catch (e: any) {
       console.error(`[ParserRegistry] Failed to parse ${filename} with ${adapter.name}:`, e);
       return {
