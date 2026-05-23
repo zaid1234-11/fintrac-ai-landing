@@ -20,10 +20,10 @@ const goals = [
 
 export const SavingsGoals = () => {
   return (
-    <Card className="bg-slate-800 border-slate-700 rounded-xl">
+    <Card className="gpu-glass h-full transform-gpu bg-slate-900/80 backdrop-blur-md border-white/10 rounded-xl">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-white">Savings Goals</CardTitle>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="min-h-11 gap-2">
           <Plus className="w-4 h-4" />
           Add Goal
         </Button>

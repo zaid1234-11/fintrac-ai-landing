@@ -43,16 +43,22 @@ export default function DashboardOverview() {
   }, []);
 
   return (
-    <>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <SpendingSummary />
-        <SavingsGoals />
-        <AIInsights />
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-6">
+        <div className="xl:col-span-2">
+          <SpendingSummary />
+        </div>
+        <div className="xl:col-span-2">
+          <SavingsGoals />
+        </div>
+        <div className="md:col-span-2 xl:col-span-2">
+          <AIInsights />
+        </div>
       </div>
 
       {/* Behavioral Wellness Audit Card */}
-      <div className="mt-4">
-        <Card>
+      <div>
+        <Card className="gpu-glass transform-gpu bg-slate-900/80 backdrop-blur-md border-white/10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Activity className="h-5 w-5 text-primary" />
@@ -121,8 +127,8 @@ export default function DashboardOverview() {
       </div>
 
       {/* Observability Dashboard */}
-      <div className="mt-4">
-        <Card>
+      <div>
+        <Card className="gpu-glass transform-gpu bg-slate-900/80 backdrop-blur-md border-white/10">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
@@ -180,10 +186,14 @@ export default function DashboardOverview() {
         </Card>
       </div>
 
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <SMSSyncStatus />
-        <ChatInterface />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+        <div className="lg:col-span-2">
+          <SMSSyncStatus />
+        </div>
+        <div className="lg:col-span-3">
+          <ChatInterface />
+        </div>
       </div>
-    </>
+    </div>
   );
 };

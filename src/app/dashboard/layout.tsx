@@ -21,7 +21,7 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
       <Panel>
         <div className="flex flex-col h-full">
           <Header onMenuClick={() => setSidebarOpen(true)} />
-          <main className="p-8 flex-1 overflow-y-auto">{children}</main>
+          <main className="p-4 sm:p-6 lg:p-8 flex-1 overflow-y-auto">{children}</main>
         </div>
       </Panel>
 

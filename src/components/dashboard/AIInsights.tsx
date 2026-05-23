@@ -221,7 +221,7 @@ export const AIInsights = () => {
   };
 
   return (
-    <Card className="col-span-1">
+    <Card className="gpu-glass h-full transform-gpu bg-slate-900/80 backdrop-blur-md border-white/10">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
@@ -232,6 +232,7 @@ export const AIInsights = () => {
           size="sm"
           onClick={analyzeSpending}
           disabled={isAnalyzing}
+          className="min-h-11"
         >
           {isAnalyzing ? (
             <>
@@ -265,7 +266,7 @@ export const AIInsights = () => {
           {insights.slice(0, 3).map((insight) => (
             <div 
               key={insight.id}
-              className="p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+              className="gpu-glass transform-gpu p-4 border rounded-lg bg-slate-950/30 backdrop-blur-md hover:bg-accent/50 transition-colors"
             >
               <div className="flex items-start gap-3">
                 <div className="mt-0.5">
@@ -297,7 +298,7 @@ export const AIInsights = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="mt-2 text-xs text-muted-foreground hover:text-primary"
+                    className="mt-2 min-h-11 text-xs text-muted-foreground hover:text-primary"
                     onClick={() => handleExplainClick(insight.id)}
                   >
                     <HelpCircle className="h-3 w-3 mr-1" />
@@ -311,7 +312,7 @@ export const AIInsights = () => {
           {insights.length > 0 && (
             <Button
               variant="outline"
-              className="w-full mt-4"
+              className="w-full mt-4 min-h-11"
               size="sm"
               onClick={() => router.push('/dashboard/ai-analysis')}
             >

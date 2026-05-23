@@ -249,7 +249,7 @@ const CardsPage = () => {
           
           <Dialog open={isAddCardOpen} onOpenChange={setIsAddCardOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-primary/80 text-white backdrop-blur-md border border-primary/50 shadow-lg shadow-primary/30 hover:bg-primary">
+              <Button className="gpu-glass transform-gpu bg-primary/80 text-white backdrop-blur-md border border-primary/50 shadow-lg shadow-primary/30 hover:bg-primary">
                 <Plus className="mr-2 h-4 w-4" /> Add New Card
               </Button>
             </DialogTrigger>

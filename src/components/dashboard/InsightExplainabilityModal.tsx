@@ -86,7 +86,7 @@ export const InsightExplainabilityModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <DialogContent className="gpu-glass max-w-3xl max-h-[80vh] overflow-y-auto transform-gpu border-white/10 bg-gradient-to-br from-slate-50/95 to-slate-100/95 backdrop-blur-md dark:from-slate-900/90 dark:to-slate-800/90">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -114,7 +114,7 @@ export const InsightExplainabilityModal = ({
         {explanation && !loading && !error && (
           <div className="space-y-6">
             {/* Trigger Reason */}
-            <div className="p-4 bg-white dark:bg-slate-800 rounded-lg border shadow-sm">
+            <div className="gpu-glass transform-gpu p-4 bg-white/90 dark:bg-slate-800/80 backdrop-blur-md rounded-lg border shadow-sm">
               <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 text-primary" />
                 Trigger Reason
@@ -124,7 +124,7 @@ export const InsightExplainabilityModal = ({
 
             {/* Recurrence Signals */}
             {Object.keys(explanation.recurrence_signals).length > 0 && (
-              <div className="p-4 bg-white dark:bg-slate-800 rounded-lg border shadow-sm">
+              <div className="gpu-glass transform-gpu p-4 bg-white/90 dark:bg-slate-800/80 backdrop-blur-md rounded-lg border shadow-sm">
                 <h3 className="font-semibold text-sm mb-3">Mathematical Parameters</h3>
                 <div className="grid grid-cols-2 gap-3">
                   {Object.entries(explanation.recurrence_signals).map(([key, value]) => (
@@ -143,7 +143,7 @@ export const InsightExplainabilityModal = ({
 
             {/* Source Transactions */}
             {explanation.source_transactions && explanation.source_transactions.length > 0 && (
-              <div className="p-4 bg-white dark:bg-slate-800 rounded-lg border shadow-sm">
+              <div className="gpu-glass transform-gpu p-4 bg-white/90 dark:bg-slate-800/80 backdrop-blur-md rounded-lg border shadow-sm">
                 <h3 className="font-semibold text-sm mb-3">Source Transactions</h3>
                 <div className="rounded-md border">
                   <Table>
@@ -180,12 +180,12 @@ export const InsightExplainabilityModal = ({
           </div>
         )}
 
-        <DialogFooter className="flex gap-2">
+        <DialogFooter className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
           <Button
             variant="outline"
             size="sm"
             onClick={() => handleFeedback('helpful')}
-            className="flex-1"
+            className="min-h-11 w-full"
           >
             <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
             Helpful
@@ -194,7 +194,7 @@ export const InsightExplainabilityModal = ({
             variant="outline"
             size="sm"
             onClick={() => handleFeedback('unhelpful')}
-            className="flex-1"
+            className="min-h-11 w-full"
           >
             <XCircle className="h-4 w-4 mr-2 text-red-500" />
             Unhelpful
@@ -203,7 +203,7 @@ export const InsightExplainabilityModal = ({
             variant="outline"
             size="sm"
             onClick={() => handleFeedback('correct_category')}
-            className="flex-1"
+            className="min-h-11 w-full"
           >
             <Sparkles className="h-4 w-4 mr-2 text-blue-500" />
             Correct Category
@@ -212,7 +212,7 @@ export const InsightExplainabilityModal = ({
             variant="outline"
             size="sm"
             onClick={() => handleFeedback('hide_alert')}
-            className="flex-1"
+            className="min-h-11 w-full"
           >
             <EyeOff className="h-4 w-4 mr-2 text-gray-500" />
             Hide Alert

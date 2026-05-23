@@ -167,7 +167,7 @@ const SecurityPage = () => {
                 </div>
                 <Button 
                   onClick={handlePasswordChange}
-                  className="w-full bg-primary/80 text-white backdrop-blur-md border border-primary/50 shadow-lg shadow-primary/30 hover:bg-primary"
+                  className="gpu-glass w-full transform-gpu bg-primary/80 text-white backdrop-blur-md border border-primary/50 shadow-lg shadow-primary/30 hover:bg-primary"
                 >
                   Update Password
                 </Button>

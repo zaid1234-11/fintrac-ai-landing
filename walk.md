@@ -381,3 +381,38 @@ SUPABASE_SERVICE_ROLE_KEY=
 - `npm.cmd run build`: compilation, linting, and type checking passed, then prerender failed because Clerk env is not configured locally:
   - Missing Clerk publishable key / `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
   - This is the same existing environment blocker documented in Sprint 5.
+
+---
+
+## SPRINT 7 - MOBILE-FIRST & CINEMATIC UX
+
+### Requested Scope
+
+- Reorganize the Behavioral Console grid for touch-first mobile layouts.
+- Enforce GPU acceleration on `backdrop-blur-md` glass surfaces.
+- Gracefully degrade heavy blur/motion effects for reduced-motion or reduced-transparency environments.
+- Ensure Next Best Action and explainability feedback controls meet 44x44px touch target guidance.
+
+### Completed Changes
+
+- Pushed Sprint 6 parser adapter work to `origin/main` at commit `c1432e4`.
+- Updated `src/app/dashboard/page.tsx` to use mobile-first stacking:
+  - summary/goals/AI insights stack on mobile
+  - AI insights span cleanly across `md`
+  - wider `xl` screens restore a composed multi-column console
+  - SMS status and AI copilot feed stack on mobile and split at `lg`
+- Updated `src/app/dashboard/layout.tsx` with responsive dashboard padding: `p-4 sm:p-6 lg:p-8`.
+- Added `transform-gpu` and `gpu-glass` to dashboard glass surfaces using `backdrop-blur-md`.
+- Audited all current `backdrop-blur-md` uses and added `transform-gpu`/`gpu-glass` where missing, including cards/security dashboard buttons.
+- Added `gpu-glass` CSS degradation rules in `src/app/globals.css`:
+  - disables backdrop filters when `prefers-reduced-motion` or `prefers-reduced-transparency` is active
+  - falls back to a solid dark translucent surface when backdrop-filter is unsupported
+- Updated AI insight/NBA buttons and modal feedback buttons to use minimum 44px touch targets via `min-h-11` / `min-w-11`.
+- Updated `InsightExplainabilityModal` feedback layout to stack cleanly on mobile and expand into a grid on larger screens.
+
+### Verification
+
+- `npx.cmd tsc --noEmit`: passed.
+- `npm.cmd run build`: compilation, linting, and type checking passed, then prerender failed because Clerk env is not configured locally:
+  - Missing Clerk publishable key / `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
+  - This is the same existing environment blocker documented in Sprint 5 and Sprint 6.

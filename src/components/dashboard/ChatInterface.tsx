@@ -58,7 +58,7 @@ export const ChatInterface = () => {
   };
 
   return (
-    <Card className="bg-slate-800 border-slate-700 rounded-xl flex flex-col h-[60vh] min-h-[400px]">
+    <Card className="gpu-glass transform-gpu bg-slate-900/80 backdrop-blur-md border-white/10 rounded-xl flex flex-col h-[60vh] min-h-[400px]">
       <CardHeader className="border-b border-slate-700">
         <div className="flex items-center justify-between">
           <CardTitle className="text-white">FinTrack AI Assistant</CardTitle>
@@ -107,7 +107,7 @@ export const ChatInterface = () => {
               className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
               disabled={isLoading}
             />
-            <Button type="submit" size="icon" className="shrink-0" disabled={isLoading}>
+            <Button type="submit" size="icon" className="min-h-11 min-w-11 shrink-0" disabled={isLoading}>
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </Button>
           </form>

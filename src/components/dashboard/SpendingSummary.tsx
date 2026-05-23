@@ -28,7 +28,7 @@ export const SpendingSummary = () => {
   }, [transactions]);
 
   return (
-    <Card className="bg-slate-800 border-slate-700 rounded-xl">
+    <Card className="gpu-glass h-full transform-gpu bg-slate-900/80 backdrop-blur-md border-white/10 rounded-xl">
       <CardHeader>
         <CardTitle className="text-white">Spending This Month</CardTitle>
         <div className="space-y-1">
