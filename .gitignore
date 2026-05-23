@@ -32,3 +32,4 @@ get-remote-versions.mjs
 test-pdf-parse.js
 test-pdf-parser-class.ts
 build-output.txt
+.vercel

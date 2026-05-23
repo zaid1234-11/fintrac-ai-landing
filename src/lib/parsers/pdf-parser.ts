@@ -27,10 +27,123 @@ export class PDFBankStatementParser implements ParserAdapter {
       
       let detectedBank = 'Unknown Bank';
       const lowercaseText = text.toLowerCase();
-      if (lowercaseText.includes('hdfc')) detectedBank = 'HDFC';
+      if (lowercaseText.includes('kotak') || lowercaseText.includes('kkbk')) {
+        detectedBank = 'KOTAK';
+      } else if (lowercaseText.includes('hdfc')) detectedBank = 'HDFC';
       else if (lowercaseText.includes('icici')) detectedBank = 'ICICI';
       else if (lowercaseText.includes('state bank of india') || lowercaseText.includes('sbi')) detectedBank = 'SBI';
       else if (lowercaseText.includes('axis')) detectedBank = 'AXIS';
+
+      // Special parsing logic for Kotak Bank multiline PDF structure
+      if (detectedBank === 'KOTAK') {
+        const transactions: NormalizedTransaction[] = [];
+        let accountLast4 = 'Unknown';
+        const accountMatch = text.match(/Account No\.?\s*(\d+)/i);
+        if (accountMatch) {
+          const fullAcc = accountMatch[1];
+          accountLast4 = fullAcc.substring(Math.max(0, fullAcc.length - 4));
+        }
+
+        const blocks: { dateStr: string; content: string }[] = [];
+        let currentBlock: { dateStr: string; content: string; isComplete: boolean } | null = null;
+
+        const txStartRegex = /^\d+\s+(\d{1,2}\s+[A-Za-z]{3}\s+\d{4}|\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4})\b/;
+        const numEndRegex = /[\-\+]?[\d,]+\.\d{2}\s+[\-\+]?[\d,]+\.\d{2}\s*$/;
+
+        for (const line of lines) {
+          if (
+            line.includes('Statement Generated on') ||
+            line.includes('Savings Account Transactions') ||
+            line.includes('# Date Description') ||
+            line.match(/^--\s+\d+\s+of\s+\d+\s+--$/) ||
+            line.includes('Statement Period')
+          ) {
+            continue;
+          }
+
+          const match = line.match(txStartRegex);
+          if (match) {
+            if (currentBlock) {
+              blocks.push(currentBlock);
+            }
+            currentBlock = {
+              dateStr: match[1],
+              content: line,
+              isComplete: numEndRegex.test(line)
+            };
+          } else if (currentBlock && !currentBlock.isComplete) {
+            currentBlock.content += ' ' + line;
+            if (numEndRegex.test(line)) {
+              currentBlock.isComplete = true;
+            }
+          }
+        }
+        if (currentBlock) {
+          blocks.push(currentBlock);
+        }
+
+        let lastBalance: number | null = null;
+
+        for (let i = 0; i < blocks.length; i++) {
+          const block = blocks[i];
+          const { content, dateStr } = block;
+
+          const numbersMatch = content.match(/([\-\+]?[\d,]+\.\d{2})\s+([\-\+]?[\d,]+\.\d{2})\s*$/);
+          if (!numbersMatch) continue;
+
+          const amount = cleanNumeric(numbersMatch[1]);
+          const balance = cleanNumeric(numbersMatch[2]);
+
+          let rawDescription = content.replace(txStartRegex, '').trim();
+          rawDescription = rawDescription.substring(0, rawDescription.lastIndexOf(numbersMatch[1])).trim();
+
+          let type: 'credit' | 'debit' = 'debit';
+          if (lastBalance !== null) {
+            if (balance > lastBalance) {
+              type = 'credit';
+            } else if (balance < lastBalance) {
+              type = 'debit';
+            } else {
+              type = isCreditDesc(rawDescription) ? 'credit' : 'debit';
+            }
+          } else {
+            type = isCreditDesc(rawDescription) ? 'credit' : 'debit';
+          }
+
+          lastBalance = balance;
+
+          if (amount === 0) continue;
+
+          const isUPI = isUPITransaction(rawDescription);
+          const merchant = isUPI ? cleanUPIMerchant(rawDescription) : cleanGeneralMerchant(rawDescription);
+          const refId = isUPI ? extractUPIReference(rawDescription) : undefined;
+          const timestamp = parseDate(dateStr);
+
+          transactions.push({
+            merchant,
+            amount,
+            currency: 'INR',
+            transaction_type: type,
+            payment_method: isUPI ? 'UPI' : (rawDescription.toLowerCase().includes('card') ? 'Card' : 'NetBanking'),
+            timestamp,
+            source: 'statement',
+            raw_payload: {
+              original_description: rawDescription,
+              parsed_via: 'pdf-parser-kotak',
+              raw_line: content,
+            },
+            transaction_ref_id: refId,
+            bank_name: detectedBank,
+          });
+        }
+
+        return {
+          success: true,
+          transactions,
+          bankName: detectedBank,
+          accountLast4,
+        };
+      }
 
       // Pattern matching for transaction rows
       // Matches standard Indian bank dates: DD-MM-YYYY, DD/MM/YYYY, DD MMM YYYY (e.g. 12 Jan 2025)
@@ -207,4 +320,19 @@ function parseDate(dateStr: string): Date {
   }
 
   return new Date(dateStr);
+}
+
+function isCreditDesc(desc: string): boolean {
+  const d = desc.toLowerCase();
+  return (
+    d.includes('recd:') ||
+    d.includes('refund') ||
+    d.includes('credit') ||
+    d.includes('deposit') ||
+    d.includes('interest') ||
+    d.includes('salary') ||
+    d.includes('received') ||
+    d.endsWith('/upi') ||
+    d.includes('cr')
+  );
 }
