@@ -16,6 +16,7 @@ SET
     allowed_mime_types = ARRAY['application/pdf', 'text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
 -- 2. Enable Storage RLS (it is enabled by default, but make sure)
+DROP POLICY IF EXISTS "Allow users to upload statements to their own folder" ON storage.objects;
 CREATE POLICY "Allow users to upload statements to their own folder"
 ON storage.objects FOR INSERT
 TO authenticated
@@ -24,6 +25,7 @@ WITH CHECK (
     (auth.jwt() ->> 'sub') = (storage.foldername(name))[1]
 );
 
+DROP POLICY IF EXISTS "Allow users to view statements in their own folder" ON storage.objects;
 CREATE POLICY "Allow users to view statements in their own folder"
 ON storage.objects FOR SELECT
 TO authenticated
@@ -32,6 +34,7 @@ USING (
     (auth.jwt() ->> 'sub') = (storage.foldername(name))[1]
 );
 
+DROP POLICY IF EXISTS "Allow users to update statements in their own folder" ON storage.objects;
 CREATE POLICY "Allow users to update statements in their own folder"
 ON storage.objects FOR UPDATE
 TO authenticated
@@ -40,6 +43,7 @@ USING (
     (auth.jwt() ->> 'sub') = (storage.foldername(name))[1]
 );
 
+DROP POLICY IF EXISTS "Allow users to delete statements in their own folder" ON storage.objects;
 CREATE POLICY "Allow users to delete statements in their own folder"
 ON storage.objects FOR DELETE
 TO authenticated
