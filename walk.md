@@ -255,3 +255,53 @@ SUPABASE_SERVICE_ROLE_KEY=
 - Telemetry uses daily rollup to prevent database bloat
 - Wellness metrics are calculated from 90-day transaction history
 - The system is designed to be scalable and maintainable
+
+---
+
+## SPRINT 5 - THE "AHA!" ONBOARDING EXPERIENCE
+
+### Requested Scope
+
+- Upgrade the first-user PDF statement upload into a premium dark/glassmorphic onboarding moment.
+- Replace generic loading with an intelligent streamed activity log while ingestion runs.
+- Transition users to the Behavioral Console dashboard once ingestion and behavioral intelligence are complete.
+
+### Planned Changes
+
+1. `src/components/dashboard/TransactionUpload.tsx`
+   - Redesign the upload dropzone with a high-end SaaS dark glass treatment, clearer PDF-first language, drag/drop polish, and premium microcopy.
+   - Keep existing PDF/CSV validation, optional PDF password support, and backend upload endpoint integration.
+   - Replace spinner-style upload feedback with a sequenced activity state machine:
+     - Parsing statement structure...
+     - Normalizing merchants...
+     - Detecting recurring subscriptions...
+     - Analyzing behavioral spending patterns...
+     - Generating financial wellness insights...
+   - Pace log entries with readable delays while the real upload and ingestion status polling continue.
+   - Mark prior stages complete and keep the active stage visibly "live" without using a generic loader.
+   - On successful completion, refresh transactions and route the user to `/dashboard`.
+
+2. Verification
+   - Run TypeScript/build verification where environment constraints allow.
+   - Record any build or environment blockers here.
+
+### Completed Changes
+
+- Rebuilt `src/components/dashboard/TransactionUpload.tsx` as a premium dark/glassmorphic statement upload experience.
+- Added PDF-first drag/drop styling, privacy/file-size trust chips, selected-file treatment, and optional PDF password UI.
+- Replaced the previous spinner/status text with a sequenced activity log that streams:
+  - "Parsing statement structure..."
+  - "Normalizing merchants..."
+  - "Detecting recurring subscriptions..."
+  - "Analyzing behavioral spending patterns..."
+  - "Generating financial wellness insights..."
+- Kept the existing backend flow: POST to `/api/ingestion/upload`, then poll `/api/ingestion/status`.
+- On successful ingestion, the component now refreshes transactions and routes to `/dashboard` for the Behavioral Console.
+- Tightened polling control flow so success, processing failure, and timeout each resolve only once.
+
+### Verification
+
+- `npx.cmd tsc --noEmit`: passed after implementation and after the polling control-flow cleanup.
+- `npm.cmd run build`: Next.js compilation and type checking passed, but prerendering failed because Clerk env is not configured locally:
+  - Missing `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` / Clerk publishable key.
+  - This matches the existing environment setup note above and is not caused by the Sprint 5 component changes.
