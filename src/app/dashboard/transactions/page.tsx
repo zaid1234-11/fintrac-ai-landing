@@ -144,7 +144,7 @@ const TransactionsPage = () => {
   };
 
   return (
-    <div className="p-4 sm:p-8 rounded-lg min-h-screen relative overflow-hidden">
+    <div className="p-3 sm:p-8 rounded-lg min-h-screen relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute w-96 h-96 bg-primary/30 rounded-full blur-3xl opacity-50 animate-pulse -top-10 -left-20"></div>
@@ -233,7 +233,7 @@ const TransactionsPage = () => {
         {/* Right Column: Transaction List */}
         <div className="lg:col-span-2 space-y-4">
           {/* Search Bar + Buttons */}
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <Input
@@ -245,17 +245,18 @@ const TransactionsPage = () => {
               />
             </div>
 
-            {/* Receipt Scanner Button */}
-            <ReceiptScanner />
+            <div className="flex gap-2 w-full sm:w-auto">
+              {/* Receipt Scanner Button */}
+              <ReceiptScanner className="flex-1 sm:flex-initial" />
 
-            {/* Add Transaction Button */}
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="rounded-full px-6">
-                  <Plus className="h-5 w-5 mr-2" />
-                  Add
-                </Button>
-              </DialogTrigger>
+              {/* Add Transaction Button */}
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="rounded-full px-6 flex-1 sm:flex-initial">
+                    <Plus className="h-5 w-5 mr-2" />
+                    Add
+                  </Button>
+                </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                   <DialogTitle>Add New Transaction</DialogTitle>
@@ -338,6 +339,7 @@ const TransactionsPage = () => {
                 </div>
               </DialogContent>
             </Dialog>
+            </div>
           </div>
 
           {/* Transaction List */}
@@ -346,10 +348,10 @@ const TransactionsPage = () => {
               <Table className="w-full">
                 <TableHeader className="bg-slate-950/50">
                   <TableRow className="border-slate-800 hover:bg-transparent">
-                    <TableHead className="w-[100px]">Date</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead className="w-[140px]">Category</TableHead>
-                    <TableHead className="text-right w-[100px]">Amount</TableHead>
+                    <TableHead className="w-[80px] sm:w-[100px] px-2.5 py-3 text-xs sm:text-sm">Date</TableHead>
+                    <TableHead className="px-2.5 py-3 text-xs sm:text-sm">Description</TableHead>
+                    <TableHead className="w-[105px] sm:w-[140px] px-2.5 py-3 text-xs sm:text-sm">Category</TableHead>
+                    <TableHead className="text-right w-[75px] sm:w-[100px] px-2.5 py-3 text-xs sm:text-sm">Amount</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -361,22 +363,22 @@ const TransactionsPage = () => {
                     return (
                       <TableRow key={transaction.id} className="border-slate-800">
                         {/* Classic Date Font */}
-                        <TableCell className="font-serif text-slate-300 whitespace-nowrap">
-                          {new Date(transaction.date).toLocaleDateString()}
+                        <TableCell className="font-serif text-slate-300 whitespace-nowrap px-2.5 py-3 text-[11px] sm:text-sm">
+                          {new Date(transaction.date).toLocaleDateString("en-IN", { day: '2-digit', month: '2-digit', year: '2-digit' })}
                         </TableCell>
                         
                         {/* Truncated Description to prevent horizontal scroll */}
-                        <TableCell className="font-medium text-white max-w-[150px] sm:max-w-[300px] truncate" title={transaction.merchant}>
+                        <TableCell className="font-medium text-white max-w-[70px] sm:max-w-[300px] truncate px-2.5 py-3 text-[11px] sm:text-sm" title={transaction.merchant}>
                           {transaction.merchant}
                         </TableCell>
                         
                         {/* Editable Category Dropdown */}
-                        <TableCell>
+                        <TableCell className="px-2.5 py-3">
                           <Select 
                             defaultValue={transaction.category} 
                             onValueChange={(value) => handleCategoryChange(transaction.id, value)}
                           >
-                            <SelectTrigger className="h-8 w-[130px] text-xs bg-slate-900 border-slate-700">
+                            <SelectTrigger className="h-7 w-[92px] sm:h-8 sm:w-[130px] text-[10px] sm:text-xs bg-slate-900 border-slate-700 px-2 py-1">
                               <SelectValue placeholder="Category" />
                             </SelectTrigger>
                             <SelectContent className="bg-slate-900 border-slate-700">
@@ -390,7 +392,7 @@ const TransactionsPage = () => {
                         </TableCell>
                         
                         {/* Amount */}
-                        <TableCell className={`text-right font-medium whitespace-nowrap ${
+                        <TableCell className={`text-right font-medium whitespace-nowrap px-2.5 py-3 text-[11px] sm:text-sm ${
                           transaction.type === "credit" ? "text-emerald-400" : "text-white"
                         }`}>
                           {transaction.type === "credit" ? "+" : "-"}₹{transaction.amount.toLocaleString("en-IN")}

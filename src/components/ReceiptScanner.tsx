@@ -20,7 +20,7 @@ interface ScannedData {
   imageUrl: string;
 }
 
-export const ReceiptScanner = () => {
+export const ReceiptScanner = ({ className }: { className?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scannedData, setScannedData] = useState<ScannedData | null>(null);
@@ -177,7 +177,7 @@ export const ReceiptScanner = () => {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)} variant="outline" className="gap-2">
+      <Button onClick={() => setIsOpen(true)} variant="outline" className={`gap-2 ${className || ""}`}>
         <Scan className="h-4 w-4" />
         Scan Receipt
       </Button>
