@@ -32,7 +32,7 @@ export const SpendingSummary = () => {
       <CardHeader>
         <CardTitle className="text-white">Spending This Month</CardTitle>
         <div className="space-y-1">
-          <p className="text-3xl font-bold text-white">
+          <p className="text-3xl font-bold text-white tracking-tight truncate sm:whitespace-normal">
             ₹{totalSpent.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
         </div>
@@ -44,19 +44,37 @@ export const SpendingSummary = () => {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-              <XAxis dataKey="category" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
+            {/* Add margins to prevent labels from cutting off */}
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 40 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#475569" vertical={false} />
+              
+              <XAxis 
+                dataKey="category" 
+                stroke="#94a3b8" 
+                fontSize={12}
+                tickMargin={10}
+                angle={-45} // Rotate long labels like "Payments" diagonally
+                textAnchor="end" // Align them cleanly
+                height={50} // Give the rotated text room to breathe
+              />
+              
+              <YAxis 
+                stroke="#94a3b8" 
+                fontSize={12}
+                tickFormatter={(value) => value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value} // Compresses large numbers
+              />
+              
               <Tooltip
+                cursor={{ fill: '#334155', opacity: 0.4 }}
                 contentStyle={{
                   backgroundColor: "#1e293b",
                   border: "1px solid #475569",
                   borderRadius: "8px",
                   color: "#fff",
                 }}
+                formatter={(value: number) => [`₹${value.toLocaleString("en-IN")}`, "Amount"]}
               />
-              <Bar dataKey="amount" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="amount" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} maxBarSize={50} />
             </BarChart>
           </ResponsiveContainer>
         )}
