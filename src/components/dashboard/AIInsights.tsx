@@ -232,7 +232,7 @@ export const AIInsights = () => {
           size="sm"
           onClick={analyzeSpending}
           disabled={isAnalyzing}
-          className="min-h-11"
+          className="min-h-11 px-3 py-2.5 sm:px-4 sm:py-2"
         >
           {isAnalyzing ? (
             <>
@@ -298,7 +298,7 @@ export const AIInsights = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="mt-2 min-h-11 text-xs text-muted-foreground hover:text-primary"
+                    className="mt-2 min-h-11 px-3 py-2.5 sm:px-4 sm:py-2 text-xs text-muted-foreground hover:text-primary"
                     onClick={() => handleExplainClick(insight.id)}
                   >
                     <HelpCircle className="h-3 w-3 mr-1" />
@@ -312,7 +312,7 @@ export const AIInsights = () => {
           {insights.length > 0 && (
             <Button
               variant="outline"
-              className="w-full mt-4 min-h-11"
+              className="w-full mt-4 min-h-11 px-3 py-2.5 sm:px-4 sm:py-2"
               size="sm"
               onClick={() => router.push('/dashboard/ai-analysis')}
             >
@@ -327,6 +327,7 @@ export const AIInsights = () => {
         insightId={selectedInsightId}
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
+        onRefresh={analyzeSpending}
       />
     </Card>
   );

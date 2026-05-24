@@ -2,6 +2,8 @@
 
 import { DragEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { processInChunks } from "@/lib/ingestion/clientChunkUpload";
+
 import {
   Activity,
   ArrowRight,
@@ -60,39 +62,11 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
   const [progress, setProgress] = useState(0);
   const [activeStage, setActiveStage] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const activityTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (activityTimerRef.current) {
-        clearInterval(activityTimerRef.current);
-      }
-    };
-  }, []);
-
-  const startActivityStream = () => {
-    if (activityTimerRef.current) {
-      clearInterval(activityTimerRef.current);
-    }
-
-    setActiveStage(0);
-    setProgress(12);
-
-    activityTimerRef.current = setInterval(() => {
-      setActiveStage((current) => Math.min(current + 1, activitySteps.length - 1));
-      setProgress((current) => Math.min(current + 14, 88));
-    }, 1800);
-  };
-
-  const stopActivityStream = () => {
-    if (activityTimerRef.current) {
-      clearInterval(activityTimerRef.current);
-      activityTimerRef.current = null;
-    }
-  };
 
   const resetUploadState = () => {
-    stopActivityStream();
+
+
+
     setUploading(false);
     setProgress(0);
     setActiveStage(0);
@@ -156,7 +130,8 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
     if (!file) return;
 
     setUploading(true);
-    startActivityStream();
+    setActiveStage(0);
+    setProgress(15);
 
     try {
       const formData = new FormData();
@@ -175,9 +150,38 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
         throw new Error(data.error || "Upload failed");
       }
 
-      setProgress((current) => Math.max(current, 42));
-      setActiveStage((current) => Math.max(current, 1));
-      pollIngestionStatus(data.statement.id);
+      setActiveStage(1);
+      setProgress(25);
+
+      await processInChunks(data.transactions, {
+        statementId: data.statementId,
+        onLogMessage: (msg) => {
+          if (msg.toLowerCase().includes("generating")) {
+            setActiveStage(4);
+            setProgress(90);
+          } else {
+            setActiveStage(2);
+          }
+        },
+        onProgressPercentage: (pct) => {
+          setProgress(Math.round(25 + (pct * 0.6)));
+        },
+      });
+
+      setActiveStage(activitySteps.length);
+      setProgress(100);
+
+      toast.success("Behavioral Console is ready", {
+        description: `Extracted ${data.transactions.length} transactions from ${data.bankName || "your statement"}.`,
+      });
+
+      setTimeout(() => {
+        setFile(null);
+        setPassword("");
+        resetUploadState();
+        onUploadSuccess();
+        router.push("/dashboard");
+      }, 1500);
     } catch (error: any) {
       console.error(error);
       toast.error("Ingestion failed", {
@@ -187,74 +191,6 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
     }
   };
 
-  const pollIngestionStatus = (statementId: string) => {
-    let attempts = 0;
-    const maxAttempts = 30;
-
-    const interval = setInterval(async () => {
-      attempts++;
-
-      try {
-        const res = await fetch("/api/ingestion/status");
-        if (!res.ok) throw new Error("Failed to fetch status");
-
-        const statements = await res.json();
-        const activeStatement = statements.find((s: any) => s.id === statementId);
-
-        if (!activeStatement) {
-          clearInterval(interval);
-          throw new Error("Statement audit record not found.");
-        }
-
-        if (activeStatement.status === "completed") {
-          clearInterval(interval);
-          stopActivityStream();
-          setActiveStage(activitySteps.length);
-          setProgress(100);
-
-          toast.success("Behavioral Console is ready", {
-            description: `Extracted ${activeStatement.extracted_transactions_count} transactions from ${activeStatement.bank_name || "your statement"}.`,
-          });
-
-          setTimeout(() => {
-            setFile(null);
-            setPassword("");
-            resetUploadState();
-            onUploadSuccess();
-            router.push("/dashboard");
-          }, 1500);
-          return;
-        } else if (activeStatement.status === "failed") {
-          clearInterval(interval);
-          throw new Error(
-            activeStatement.error_message ||
-              "The document layout could not be parsed correctly. Enter manually or try another statement."
-          );
-        } else {
-          setProgress((prev) => Math.min(prev + 5, 94));
-        }
-      } catch (err: any) {
-        clearInterval(interval);
-        toast.error("Processing error", {
-          description: err.message || "Background analysis failed.",
-        });
-        resetUploadState();
-        return;
-      }
-
-      if (attempts >= maxAttempts) {
-        clearInterval(interval);
-        toast.warning("Ingestion is taking longer than expected", {
-          description: "Your transactions will update in the background. Check back in a few minutes.",
-        });
-        setFile(null);
-        resetUploadState();
-        onUploadSuccess();
-        router.push("/dashboard");
-      }
-    }, 2000);
-  };
-
   const clearFile = () => {
     setFile(null);
     setPassword("");
@@ -262,7 +198,7 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
   };
 
   return (
-    <Card className="overflow-hidden border-white/10 bg-slate-950/70 shadow-2xl shadow-black/30 backdrop-blur-2xl">
+    <Card className="gpu-glass transform-gpu overflow-hidden border-white/10 bg-slate-950/70 shadow-2xl shadow-black/30 backdrop-blur-2xl">
       <CardContent className="relative p-0">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
         <div className="absolute -right-20 -top-24 h-52 w-52 rounded-full bg-primary/20 blur-3xl" />
@@ -447,13 +383,13 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Button
                     variant="outline"
-                    className="border-white/10 bg-white/[0.03] text-slate-200 hover:bg-white/10 hover:text-white"
+                    className="min-h-11 px-3 py-2.5 sm:px-4 sm:py-2 border-white/10 bg-white/[0.03] text-slate-200 hover:bg-white/10 hover:text-white"
                     onClick={clearFile}
                   >
                     Cancel
                   </Button>
                   <Button
-                    className="gap-2 bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"
+                    className="min-h-11 px-3 py-2.5 sm:px-4 sm:py-2 gap-2 bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"
                     onClick={handleUpload}
                   >
                     Upload & Analyze

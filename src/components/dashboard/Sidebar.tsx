@@ -151,7 +151,7 @@ const Sidebar = ({ isMobile, isOpen, setIsOpen }: SidebarProps) => {
         {/* Backdrop */}
         {isOpen && (
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+            className="gpu-glass transform-gpu fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
             onClick={() => setIsOpen?.(false)}
           />
         )}

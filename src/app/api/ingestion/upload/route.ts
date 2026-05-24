@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { uploadStatement } from '@/lib/storage/actions';
 import { createClient } from '@/lib/supabase/server';
-import { inngest } from '@/lib/jobs/inngest-client';
+import { parserRegistry } from '@/lib/parsers/registry';
 
 export const dynamic = "force-dynamic";
 
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
       .from('bank_statements')
       .insert({
         user_id: userId,
-        bank_name: 'Analyzing...', // will be updated by parser
+        bank_name: 'Analyzing...', // will be updated below
         file_url: uploadResult.filePath,
         status: 'processing',
         extracted_transactions_count: 0,
@@ -76,23 +76,49 @@ export async function POST(req: Request) {
       );
     }
 
-    // 7. Fire Inngest background event
-    console.log(`[Upload API] Dispatching statement.uploaded for statementId: ${statement.id}`);
-    await inngest.send({
-      name: 'statement.uploaded',
-      data: {
-        userId,
-        statementId: statement.id,
-        filePath: uploadResult.filePath,
-        filename: file.name,
-        password,
-      },
-    });
+    // 7. Parse file content synchronously
+    console.log(`[Upload API] Parsing file content for statementId: ${statement.id}`);
+    const parseResult = await parserRegistry.parseFile(buffer, file.name, password);
+
+    if (!parseResult.success) {
+      // Update statement record to failed
+      await supabase
+        .from('bank_statements')
+        .update({
+          status: 'failed',
+          error_message: parseResult.error || 'Parsing failed',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', statement.id);
+
+      return NextResponse.json(
+        { error: parseResult.error || 'Failed to parse bank statement file.' },
+        { status: 400 }
+      );
+    }
+
+    // Update statement metadata in database
+    const bankName = parseResult.bankName || 'Detected Bank';
+    const accountLast4 = parseResult.accountLast4 || '****';
+    const cleanAccountLast4 = accountLast4.substring(Math.max(0, accountLast4.length - 4));
+
+    await supabase
+      .from('bank_statements')
+      .update({
+        bank_name: bankName,
+        account_number_last_4: cleanAccountLast4,
+        extracted_transactions_count: parseResult.transactions.length,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', statement.id);
 
     return NextResponse.json({
       success: true,
-      message: 'Statement uploaded and queued for processing successfully.',
-      statement,
+      message: 'Statement parsed successfully. Ready for chunked upload.',
+      statementId: statement.id,
+      bankName,
+      accountLast4: cleanAccountLast4,
+      transactions: parseResult.transactions,
     });
   } catch (error: any) {
     if (error.message?.includes('Dynamic server usage') || error.digest === 'DYNAMIC_SERVER_USAGE') {
@@ -105,3 +131,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

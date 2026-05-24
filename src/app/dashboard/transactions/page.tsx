@@ -146,7 +146,7 @@ const TransactionsPage = () => {
           <TransactionUpload onUploadSuccess={refreshTransactions} />
 
           {/* Spending Summary Graph */}
-          <Card className="bg-slate-800/40 backdrop-blur-xl border-white/10 shadow-lg shadow-primary/10">
+          <Card className="gpu-glass transform-gpu bg-slate-800/40 backdrop-blur-xl border-white/10 shadow-lg shadow-primary/10">
             <CardHeader>
               <CardTitle className="text-white text-2xl">Spending Summary</CardTitle>
               <CardDescription className="text-slate-400">Your spending by category this month.</CardDescription>
@@ -178,7 +178,7 @@ const TransactionsPage = () => {
           </Card>
 
           {/* Filters */}
-          <Card className="bg-slate-800/40 backdrop-blur-xl border-white/10 shadow-lg shadow-accent/10">
+          <Card className="gpu-glass transform-gpu bg-slate-800/40 backdrop-blur-xl border-white/10 shadow-lg shadow-accent/10">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <SlidersHorizontal /> Filters
@@ -229,7 +229,7 @@ const TransactionsPage = () => {
                 placeholder="Search for transactions..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-full bg-slate-800/40 backdrop-blur-lg border border-white/10 text-white placeholder:text-slate-400 focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
+                className="gpu-glass transform-gpu w-full pl-12 pr-4 py-3 rounded-full bg-slate-800/40 backdrop-blur-lg border border-white/10 text-white placeholder:text-slate-400 focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
               />
             </div>
 
@@ -339,7 +339,7 @@ const TransactionsPage = () => {
                 return (
                   <Card
                     key={t.id}
-                    className="bg-slate-800/40 backdrop-blur-xl border-white/10 flex items-center p-4 gap-4 transition-all hover:border-primary/50 hover:bg-slate-800/60 hover:shadow-lg hover:shadow-primary/20"
+                    className="gpu-glass transform-gpu bg-slate-800/40 backdrop-blur-xl border-white/10 flex items-center p-4 gap-4 transition-all hover:border-primary/50 hover:bg-slate-800/60 hover:shadow-lg hover:shadow-primary/20"
                   >
                     <div className="flex-shrink-0 bg-slate-700/50 text-slate-300 p-3 rounded-full">
                       <CategoryIcon className="w-6 h-6" />

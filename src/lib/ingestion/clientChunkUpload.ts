@@ -41,6 +41,8 @@ export async function processInChunks<T>(
 
   const response = await fetch('/api/insights/generate', {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ statementId: options.statementId }),
   });
 
   if (!response.ok) {
