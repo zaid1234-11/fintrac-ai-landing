@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useTransactions } from "@/contexts/TransactionContext";
 import { toast } from "sonner";
 import { ReceiptScanner } from "@/components/ReceiptScanner";
@@ -329,80 +330,94 @@ const TransactionsPage = () => {
           </div>
 
           {/* Transaction List */}
-          <ScrollArea className="h-[calc(100vh-220px)] lg:h-[75vh] pr-4">
-            <div className="space-y-3">
-              {filteredTransactions.map((t) => {
-                const Icon = t.type === "debit" ? ArrowUpRight : ArrowDownLeft;
-                const amountColor = t.type === "debit" ? "text-red-400" : "text-green-400";
-                const CategoryIcon = categoryIcons[t.category] || HelpCircle;
+          <Card className="bg-slate-900/80 border-slate-800 rounded-xl overflow-hidden flex flex-col">
+            <CardContent className="p-0 overflow-x-auto overflow-y-auto h-[calc(100vh-220px)] lg:h-[75vh]">
+              <Table className="w-full">
+                <TableHeader className="bg-slate-950/50">
+                  <TableRow className="border-b border-slate-800">
+                    <TableHead className="text-slate-400 text-xs px-4">Merchant</TableHead>
+                    <TableHead className="text-slate-400 text-xs">Date</TableHead>
+                    <TableHead className="text-slate-400 text-xs">Source</TableHead>
+                    <TableHead className="text-slate-400 text-xs">Category</TableHead>
+                    <TableHead className="text-slate-400 text-xs text-right pr-4">Amount</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTransactions.map((t) => {
+                    const Icon = t.type === "debit" ? ArrowUpRight : ArrowDownLeft;
+                    const amountColor = t.type === "debit" ? "text-red-400" : "text-green-400";
+                    const CategoryIcon = categoryIcons[t.category] || HelpCircle;
 
-                return (
-                  <Card
-                    key={t.id}
-                    className="gpu-glass transform-gpu bg-slate-800/40 backdrop-blur-xl border-white/10 flex items-center p-4 gap-4 transition-all hover:border-primary/50 hover:bg-slate-800/60 hover:shadow-lg hover:shadow-primary/20"
-                  >
-                    <div className="flex-shrink-0 bg-slate-700/50 text-slate-300 p-3 rounded-full">
-                      <CategoryIcon className="w-6 h-6" />
-                    </div>
-                    <div className="flex-grow overflow-hidden">
-                      <p className="font-bold text-white truncate">{t.merchant}</p>
-                      <p className="text-xs text-slate-400">
-                        {new Date(t.date).toLocaleDateString("en-GB", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
-                      </p>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className={`font-bold text-lg ${amountColor} flex items-center justify-end gap-1`}>
-                        <Icon className="w-4 h-4" />₹{t.amount.toLocaleString("en-IN")}
-                      </p>
-                      <div className="mt-1 flex items-center justify-end gap-1.5 flex-wrap">
-                        <Badge variant="outline" className={`text-[10px] px-1.5 py-0.5 border-slate-700 ${
-                          t.classification_source === 'merchant_memory' ? 'bg-cyan-500/10 text-cyan-400' :
-                          t.classification_source === 'global_registry' ? 'bg-blue-500/10 text-blue-400' :
-                          t.classification_source === 'rules' ? 'bg-green-500/10 text-green-400' :
-                          t.classification_source === 'fuzzy_match' ? 'bg-amber-500/10 text-amber-400' :
-                          t.classification_source === 'ai' ? 'bg-purple-500/10 text-purple-400' :
-                          t.classification_source === 'manual' ? 'bg-pink-500/10 text-pink-400' :
-                          'bg-slate-500/10 text-slate-400'
-                        }`}>
-                          {t.classification_source === 'merchant_memory' ? 'Memory' :
-                           t.classification_source === 'global_registry' ? 'Registry' :
-                           t.classification_source === 'rules' ? 'Rules' :
-                           t.classification_source === 'fuzzy_match' ? 'Fuzzy' :
-                           t.classification_source === 'ai' ? `AI (${Math.round((t.ai_confidence_score ?? 0.8) * 100)}%)` :
-                           t.classification_source === 'manual' ? 'Manual' :
-                           'Fallback'}
-                        </Badge>
-                        <Select 
-                          value={t.category} 
-                          onValueChange={(newCat) => correctTransactionCategory(t.id, newCat)}
-                        >
-                          <SelectTrigger className="h-6 w-[120px] bg-slate-800/60 border-slate-700 text-xs text-slate-200 focus:ring-0 focus:ring-offset-0">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.keys(categoryIcons).map((cat) => (
-                              <SelectItem key={cat} value={cat} className="text-xs">
-                                {cat}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })}
+                    return (
+                      <TableRow key={t.id} className="border-b border-slate-800/50 hover:bg-slate-850/30">
+                        <TableCell className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-slate-700/50 text-slate-300 p-2 rounded-full">
+                              <CategoryIcon className="w-4 h-4" />
+                            </div>
+                            <span className="font-bold text-white truncate max-w-[150px]">{t.merchant}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs text-slate-300 font-mono">
+                          {new Date(t.date).toLocaleDateString("en-GB", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={`text-[10px] px-1.5 py-0.5 border-slate-700 ${
+                            t.classification_source === 'merchant_memory' ? 'bg-cyan-500/10 text-cyan-400' :
+                            t.classification_source === 'global_registry' ? 'bg-blue-500/10 text-blue-400' :
+                            t.classification_source === 'rules' ? 'bg-green-500/10 text-green-400' :
+                            t.classification_source === 'fuzzy_match' ? 'bg-amber-500/10 text-amber-400' :
+                            t.classification_source === 'ai' ? 'bg-purple-500/10 text-purple-400' :
+                            t.classification_source === 'manual' ? 'bg-pink-500/10 text-pink-400' :
+                            'bg-slate-500/10 text-slate-400'
+                          }`}>
+                            {t.classification_source === 'merchant_memory' ? 'Memory' :
+                             t.classification_source === 'global_registry' ? 'Registry' :
+                             t.classification_source === 'rules' ? 'Rules' :
+                             t.classification_source === 'fuzzy_match' ? 'Fuzzy' :
+                             t.classification_source === 'ai' ? `AI (${Math.round((t.ai_confidence_score ?? 0.8) * 100)}%)` :
+                             t.classification_source === 'manual' ? 'Manual' :
+                             'Fallback'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Select 
+                            value={t.category} 
+                            onValueChange={(newCat) => correctTransactionCategory(t.id, newCat)}
+                          >
+                            <SelectTrigger className="h-7 w-[120px] bg-slate-800/60 border-slate-700 text-xs text-slate-200 focus:ring-0 focus:ring-offset-0">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.keys(categoryIcons).map((cat) => (
+                                <SelectItem key={cat} value={cat} className="text-xs">
+                                  {cat}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell className="text-right pr-4">
+                          <span className={`font-bold text-sm ${amountColor} inline-flex items-center gap-1`}>
+                            <Icon className="w-3.5 h-3.5" />₹{t.amount.toLocaleString("en-IN")}
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
               {filteredTransactions.length === 0 && (
                 <div className="text-center py-16">
                   <p className="text-xl text-slate-300">No transactions found.</p>
                 </div>
               )}
-            </div>
-          </ScrollArea>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
