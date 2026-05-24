@@ -132,6 +132,17 @@ const TransactionsPage = () => {
   const totalSpent = spendingData.reduce((sum, item) => sum + item.amount, 0);
   const totalReceived = transactions.filter((t) => t.type === "credit").reduce((sum, item) => sum + item.amount, 0);
 
+  const handleCategoryChange = async (transactionId: string, newCategory: string) => {
+    console.log(`Updating transaction ${transactionId} to ${newCategory}`);
+    try {
+      await correctTransactionCategory(transactionId, newCategory);
+      toast.success("Category updated and engine retrained!");
+    } catch (error) {
+      console.error("Error updating category:", error);
+      toast.error("Failed to update category");
+    }
+  };
+
   return (
     <div className="p-4 sm:p-8 rounded-lg min-h-screen relative overflow-hidden">
       {/* Animated background */}
@@ -334,65 +345,41 @@ const TransactionsPage = () => {
             <CardContent className="p-0 overflow-x-auto overflow-y-auto h-[calc(100vh-220px)] lg:h-[75vh]">
               <Table className="w-full">
                 <TableHeader className="bg-slate-950/50">
-                  <TableRow className="border-b border-slate-800">
-                    <TableHead className="text-slate-400 text-xs px-4">Merchant</TableHead>
-                    <TableHead className="text-slate-400 text-xs">Date</TableHead>
-                    <TableHead className="text-slate-400 text-xs">Source</TableHead>
-                    <TableHead className="text-slate-400 text-xs">Category</TableHead>
-                    <TableHead className="text-slate-400 text-xs text-right pr-4">Amount</TableHead>
+                  <TableRow className="border-slate-800 hover:bg-transparent">
+                    <TableHead className="w-[100px]">Date</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead className="w-[140px]">Category</TableHead>
+                    <TableHead className="text-right w-[100px]">Amount</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredTransactions.map((t) => {
-                    const Icon = t.type === "debit" ? ArrowUpRight : ArrowDownLeft;
-                    const amountColor = t.type === "debit" ? "text-red-400" : "text-green-400";
-                    const CategoryIcon = categoryIcons[t.category] || HelpCircle;
+                  {filteredTransactions.map((transaction) => {
+                    const Icon = transaction.type === "debit" ? ArrowUpRight : ArrowDownLeft;
+                    const amountColor = transaction.type === "debit" ? "text-red-400" : "text-green-400";
+                    const CategoryIcon = categoryIcons[transaction.category] || HelpCircle;
 
                     return (
-                      <TableRow key={t.id} className="border-b border-slate-800/50 hover:bg-slate-850/30">
-                        <TableCell className="px-4 py-3">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-slate-700/50 text-slate-300 p-2 rounded-full">
-                              <CategoryIcon className="w-4 h-4" />
-                            </div>
-                            <span className="font-bold text-white truncate max-w-[150px]">{t.merchant}</span>
-                          </div>
+                      <TableRow key={transaction.id} className="border-slate-800">
+                        {/* Classic Date Font */}
+                        <TableCell className="font-serif text-slate-300 whitespace-nowrap">
+                          {new Date(transaction.date).toLocaleDateString()}
                         </TableCell>
-                        <TableCell className="text-xs text-slate-300 font-mono">
-                          {new Date(t.date).toLocaleDateString("en-GB", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
+                        
+                        {/* Truncated Description to prevent horizontal scroll */}
+                        <TableCell className="font-medium text-white max-w-[150px] sm:max-w-[300px] truncate" title={transaction.merchant}>
+                          {transaction.merchant}
                         </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={`text-[10px] px-1.5 py-0.5 border-slate-700 ${
-                            t.classification_source === 'merchant_memory' ? 'bg-cyan-500/10 text-cyan-400' :
-                            t.classification_source === 'global_registry' ? 'bg-blue-500/10 text-blue-400' :
-                            t.classification_source === 'rules' ? 'bg-green-500/10 text-green-400' :
-                            t.classification_source === 'fuzzy_match' ? 'bg-amber-500/10 text-amber-400' :
-                            t.classification_source === 'ai' ? 'bg-purple-500/10 text-purple-400' :
-                            t.classification_source === 'manual' ? 'bg-pink-500/10 text-pink-400' :
-                            'bg-slate-500/10 text-slate-400'
-                          }`}>
-                            {t.classification_source === 'merchant_memory' ? 'Memory' :
-                             t.classification_source === 'global_registry' ? 'Registry' :
-                             t.classification_source === 'rules' ? 'Rules' :
-                             t.classification_source === 'fuzzy_match' ? 'Fuzzy' :
-                             t.classification_source === 'ai' ? `AI (${Math.round((t.ai_confidence_score ?? 0.8) * 100)}%)` :
-                             t.classification_source === 'manual' ? 'Manual' :
-                             'Fallback'}
-                          </Badge>
-                        </TableCell>
+                        
+                        {/* Editable Category Dropdown */}
                         <TableCell>
                           <Select 
-                            value={t.category} 
-                            onValueChange={(newCat) => correctTransactionCategory(t.id, newCat)}
+                            defaultValue={transaction.category} 
+                            onValueChange={(value) => handleCategoryChange(transaction.id, value)}
                           >
-                            <SelectTrigger className="h-7 w-[120px] bg-slate-800/60 border-slate-700 text-xs text-slate-200 focus:ring-0 focus:ring-offset-0">
-                              <SelectValue />
+                            <SelectTrigger className="h-8 w-[130px] text-xs bg-slate-900 border-slate-700">
+                              <SelectValue placeholder="Category" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="bg-slate-900 border-slate-700">
                               {Object.keys(categoryIcons).map((cat) => (
                                 <SelectItem key={cat} value={cat} className="text-xs">
                                   {cat}
@@ -401,10 +388,12 @@ const TransactionsPage = () => {
                             </SelectContent>
                           </Select>
                         </TableCell>
-                        <TableCell className="text-right pr-4">
-                          <span className={`font-bold text-sm ${amountColor} inline-flex items-center gap-1`}>
-                            <Icon className="w-3.5 h-3.5" />₹{t.amount.toLocaleString("en-IN")}
-                          </span>
+                        
+                        {/* Amount */}
+                        <TableCell className={`text-right font-medium whitespace-nowrap ${
+                          transaction.type === "credit" ? "text-emerald-400" : "text-white"
+                        }`}>
+                          {transaction.type === "credit" ? "+" : "-"}₹{transaction.amount.toLocaleString("en-IN")}
                         </TableCell>
                       </TableRow>
                     );
