@@ -241,6 +241,7 @@ export function TransactionUpload({ onUploadSuccess }: TransactionUploadProps) {
                 accept=".pdf,.csv"
                 className="hidden"
                 onChange={handleChange}
+                aria-label="Upload bank statement"
               />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.18),transparent_40%)] opacity-80" />
               <div className="relative mb-5 grid h-20 w-20 place-items-center rounded-3xl border border-white/10 bg-slate-950/80 shadow-inner shadow-white/5 transition-transform duration-300 group-hover:-translate-y-1">

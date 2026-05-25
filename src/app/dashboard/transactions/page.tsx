@@ -258,9 +258,9 @@ const TransactionsPage = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-slate-300 text-sm font-medium">Transaction Type</label>
+                <Label htmlFor="type-filter" className="text-slate-300 text-sm font-medium">Transaction Type</Label>
                 <Select value={typeFilter} onValueChange={(value: any) => setTypeFilter(value)}>
-                  <SelectTrigger className="w-full mt-2 bg-slate-700/50 border-slate-600 text-white focus:ring-accent/50 focus:border-accent/50">
+                  <SelectTrigger id="type-filter" aria-label="Transaction Type filter" className="w-full mt-2 bg-slate-700/50 border-slate-600 text-white focus:ring-accent/50 focus:border-accent/50">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -271,9 +271,9 @@ const TransactionsPage = () => {
                 </Select>
               </div>
               <div>
-                <label className="text-slate-300 text-sm font-medium">Category</label>
+                <Label htmlFor="category-filter" className="text-slate-300 text-sm font-medium">Category</Label>
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-full mt-2 bg-slate-700/50 border-slate-600 text-white focus:ring-accent/50 focus:border-accent/50">
+                  <SelectTrigger id="category-filter" aria-label="Category filter" className="w-full mt-2 bg-slate-700/50 border-slate-600 text-white focus:ring-accent/50 focus:border-accent/50">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -301,6 +301,8 @@ const TransactionsPage = () => {
                 placeholder="Search for transactions..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Search transactions"
+                name="search"
                 className="gpu-glass transform-gpu w-full pl-12 pr-4 py-3 rounded-full bg-slate-800/40 backdrop-blur-lg border border-white/10 text-white placeholder:text-slate-400 focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
               />
             </div>
@@ -350,7 +352,7 @@ const TransactionsPage = () => {
                       value={formData.type}
                       onValueChange={(value: "debit" | "credit") => setFormData({ ...formData, type: value })}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger id="type" aria-label="Transaction Type">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -366,7 +368,7 @@ const TransactionsPage = () => {
                       value={formData.category}
                       onValueChange={(value: any) => setFormData({ ...formData, category: value })}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger id="category" aria-label="Category">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -438,7 +440,7 @@ const TransactionsPage = () => {
                             defaultValue={transaction.category} 
                             onValueChange={(value) => handleCategoryChange(transaction.id, value)}
                           >
-                            <SelectTrigger className="h-7 w-[92px] sm:h-8 sm:w-[130px] text-[10px] sm:text-xs bg-slate-900 border-slate-700 px-2 py-1">
+                            <SelectTrigger aria-label={`Category for ${transaction.merchant}`} className="h-7 w-[92px] sm:h-8 sm:w-[130px] text-[10px] sm:text-xs bg-slate-900 border-slate-700 px-2 py-1">
                               <SelectValue placeholder="Category" />
                             </SelectTrigger>
                             <SelectContent className="bg-slate-900 border-slate-700">
