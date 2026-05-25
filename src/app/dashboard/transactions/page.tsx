@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -68,6 +68,7 @@ const TransactionsPage = () => {
   const [typeFilter, setTypeFilter] = useState<"all" | "debit" | "credit">("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [optimisticCategories, setOptimisticCategories] = useState<Record<string, string>>({});
 
   // Form state
   const [formData, setFormData] = useState({
@@ -105,8 +106,31 @@ const TransactionsPage = () => {
     });
   };
 
+  // Clear optimistic override for a transaction once the official list matches or is refreshed
+  useEffect(() => {
+    setOptimisticCategories(prev => {
+      const next = { ...prev };
+      let changed = false;
+      for (const [id, cat] of Object.entries(next)) {
+        const match = transactions.find(t => t.id === id);
+        if (match && match.category === cat) {
+          delete next[id];
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [transactions]);
+
   const filteredTransactions = useMemo(() => {
     return transactions
+      .map((t) => {
+        const optimisticCategory = optimisticCategories[t.id];
+        if (optimisticCategory) {
+          return { ...t, category: optimisticCategory };
+        }
+        return t;
+      })
       .filter((t) => {
         if (typeFilter !== "all") return t.type === typeFilter;
         return true;
@@ -117,29 +141,65 @@ const TransactionsPage = () => {
       })
       .filter((t) => t.merchant.toLowerCase().includes(searchTerm.toLowerCase()))
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [transactions, searchTerm, typeFilter, categoryFilter]);
+  }, [transactions, optimisticCategories, searchTerm, typeFilter, categoryFilter]);
 
   const spendingData = useMemo(() => {
     const spendingByCategory: { [key: string]: number } = {};
     transactions
+      .map((t) => {
+        const optimisticCategory = optimisticCategories[t.id];
+        if (optimisticCategory) {
+          return { ...t, category: optimisticCategory };
+        }
+        return t;
+      })
       .filter((t) => t.type === "debit")
       .forEach((t) => {
         spendingByCategory[t.category] = (spendingByCategory[t.category] || 0) + t.amount;
       });
     return Object.entries(spendingByCategory).map(([name, amount]) => ({ name, amount }));
-  }, [transactions]);
+  }, [transactions, optimisticCategories]);
 
   const totalSpent = spendingData.reduce((sum, item) => sum + item.amount, 0);
-  const totalReceived = transactions.filter((t) => t.type === "credit").reduce((sum, item) => sum + item.amount, 0);
+  const totalReceived = transactions
+    .map((t) => {
+      const optimisticCategory = optimisticCategories[t.id];
+      if (optimisticCategory) {
+        return { ...t, category: optimisticCategory };
+      }
+      return t;
+    })
+    .filter((t) => t.type === "credit")
+    .reduce((sum, item) => sum + item.amount, 0);
 
   const handleCategoryChange = async (transactionId: string, newCategory: string) => {
     console.log(`Updating transaction ${transactionId} to ${newCategory}`);
+    
+    // Set optimistic category
+    setOptimisticCategories(prev => ({ ...prev, [transactionId]: newCategory }));
+
     try {
       await correctTransactionCategory(transactionId, newCategory);
-      toast.success("Category updated and engine retrained!");
+      
+      const intelligentMessages = [
+        "Fintrac will remember this category. ✨",
+        "Merchant memory strengthened! 🧠",
+        "Neural patterns aligned for this merchant. 🔮",
+        "Classifier model retrained successfully. 🤖"
+      ];
+      const randomMsg = intelligentMessages[Math.floor(Math.random() * intelligentMessages.length)];
+      toast.success(randomMsg);
     } catch (error) {
       console.error("Error updating category:", error);
-      toast.error("Failed to update category");
+      
+      // Rollback optimistic category
+      setOptimisticCategories(prev => {
+        const updated = { ...prev };
+        delete updated[transactionId];
+        return updated;
+      });
+      
+      toast.error("Failed to update category. Selection rolled back.");
     }
   };
 

@@ -109,24 +109,18 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
   };
 
   const correctTransactionCategory = async (id: string, category: string) => {
-    try {
-      const res = await fetch('/api/transactions/correct', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transactionId: id, category }),
-      });
+    const res = await fetch('/api/transactions/correct', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transactionId: id, category }),
+    });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Failed to update category');
-      }
-
-      toast.success('Category override saved & system trained!');
-      await refreshTransactions();
-    } catch (error: any) {
-      console.error('Error correcting category:', error);
-      toast.error(error.message || 'Failed to correct category');
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || 'Failed to update category');
     }
+
+    await refreshTransactions();
   };
 
   return (

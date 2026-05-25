@@ -74,7 +74,12 @@ export async function POST(req: Request) {
     // 1. Fetch transaction using user-scoped client to guarantee ownership (RLS)
     const { data: tx, error: fetchErr } = await userSupabase
       .from('transactions')
-      .select('*')
+      .select(`
+        *,
+        categories:category_id (
+          name
+        )
+      `)
       .eq('id', transactionId)
       .single();
 
@@ -82,6 +87,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Transaction not found or access denied' }, { status: 404 });
     }
 
+    const originalCategory = tx.categories?.name || 'Other';
     const rawDesc = tx.description || 'Manual correction';
     const type = tx.type; // 'credit' | 'debit'
 
@@ -90,7 +96,37 @@ export async function POST(req: Request) {
     const { brand } = resolveCanonicalMerchant(cleaned);
 
     // 3. Update User Memory and Global Registry (using admin client to bypass user RLS constraints on write)
-    await learnMerchantMemory(adminSupabase, userId, cleaned, brand, category, 1.00);
+    // Upsert merchant memory with incremented usage count and 1.0 confidence score
+    const { data: existingMemory } = await adminSupabase
+      .from('merchant_memory')
+      .select('id, usage_count')
+      .eq('user_id', userId)
+      .eq('raw_pattern', cleaned.toUpperCase())
+      .limit(1);
+
+    const usageCount = existingMemory && existingMemory.length > 0 
+      ? (existingMemory[0].usage_count || 1) + 1 
+      : 1;
+
+    const { error: memoryErr } = await adminSupabase
+      .from('merchant_memory')
+      .upsert({
+        user_id: userId,
+        raw_pattern: cleaned.toUpperCase(),
+        canonical_name: brand,
+        category: category,
+        confidence_score: 1.00,
+        usage_count: usageCount,
+        last_seen: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'user_id,raw_pattern' });
+
+    if (memoryErr) {
+      console.error('[Correct Transaction API] Merchant Memory Upsert error:', memoryErr);
+    }
+
+    // Crowd-sourcing Merchant Intelligence / Global Registry Stub
+    // Pushes this correction globally so other users benefit from the corrected categorization
     await learnMerchantRegistry(adminSupabase, cleaned, brand, category, 0.95);
 
     // 4. Resolve corrected category ID
@@ -99,8 +135,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to resolve or create category' }, { status: 500 });
     }
 
-    // 5. Update transaction records in DB
-    const { error: updateErr } = await adminSupabase
+    // 5. Update transaction records in DB and retrieve updated item
+    const { data: updatedTx, error: updateErr } = await adminSupabase
       .from('transactions')
       .update({
         category_id: categoryId,
@@ -110,14 +146,41 @@ export async function POST(req: Request) {
         ai_confidence_score: 1.00,
         updated_at: new Date().toISOString()
       })
-      .eq('id', transactionId);
+      .eq('id', transactionId)
+      .select(`
+        *,
+        categories:category_id (
+          name
+        )
+      `)
+      .single();
 
-    if (updateErr) {
+    if (updateErr || !updatedTx) {
       console.error('[Correct Transaction API] Update error:', updateErr);
-      return NextResponse.json({ error: updateErr.message }, { status: 500 });
+      return NextResponse.json({ error: updateErr?.message || 'Failed to update transaction' }, { status: 500 });
     }
 
-    // 6. Update transaction_classifications audit record
+    // 6. Log correction to intelligence_telemetry for future ML training
+    const { error: telemetryErr } = await adminSupabase
+      .from('intelligence_telemetry')
+      .upsert({
+        metric_date: new Date().toISOString().split('T')[0],
+        metric_name: `correction_${transactionId}`,
+        metric_value: 1.0,
+        metadata: {
+          original_category: originalCategory,
+          corrected_category: category,
+          transaction_id: transactionId,
+          merchant_name: brand,
+          cleaned_description: cleaned
+        }
+      }, { onConflict: 'metric_date,metric_name' });
+
+    if (telemetryErr) {
+      console.error('[Correct Transaction API] Telemetry insert error:', telemetryErr);
+    }
+
+    // 7. Update transaction_classifications audit record
     await adminSupabase
       .from('transaction_classifications')
       .upsert({
@@ -131,10 +194,26 @@ export async function POST(req: Request) {
         rule_matched: 'User manual override correction loop'
       }, { onConflict: 'transaction_id' });
 
-    // 7. Re-generate behavioral insights now that spending categories have changed
+    // 8. Re-generate behavioral insights now that spending categories have changed
     await generateBehavioralInsights(adminSupabase, userId);
 
-    return NextResponse.json({ success: true, brand, category });
+    // Map database schema to Context type
+    const responseTx = {
+      id: updatedTx.id,
+      merchant: updatedTx.merchant_name || 'Unknown',
+      amount: Number(updatedTx.amount),
+      type: updatedTx.type,
+      date: updatedTx.date || updatedTx.created_at,
+      category: updatedTx.categories?.name || category,
+      description: updatedTx.description,
+      upi_id: updatedTx.upi_id,
+      blockchain_hash: updatedTx.blockchain_hash,
+      source: updatedTx.source,
+      classification_source: updatedTx.classification_source,
+      ai_confidence_score: updatedTx.ai_confidence_score ? Number(updatedTx.ai_confidence_score) : 1.00,
+    };
+
+    return NextResponse.json(responseTx);
   } catch (error: any) {
     if (error.message?.includes('Dynamic server usage') || error.digest === 'DYNAMIC_SERVER_USAGE') {
       throw error;
