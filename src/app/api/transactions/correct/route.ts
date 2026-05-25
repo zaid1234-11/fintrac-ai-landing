@@ -6,6 +6,7 @@ import { cleanMerchantString } from '@/lib/normalization/merchantCleaner';
 import { resolveCanonicalMerchant } from '@/lib/normalization/canonicalResolver';
 import { learnMerchantMemory, learnMerchantRegistry } from '@/lib/ai/intelligenceDb';
 import { generateBehavioralInsights } from '@/lib/ai/behavioralIntel';
+import { inngest } from '@/lib/jobs/inngest-client';
 
 export const dynamic = "force-dynamic";
 
@@ -194,8 +195,17 @@ export async function POST(req: Request) {
         rule_matched: 'User manual override correction loop'
       }, { onConflict: 'transaction_id' });
 
-    // 8. Re-generate behavioral insights now that spending categories have changed
-    await generateBehavioralInsights(adminSupabase, userId);
+    // 8. Trigger async background insights recomputation via Inngest event
+    try {
+      await inngest.send({
+        name: 'fintrac/user.insights.recalculate',
+        data: { userId }
+      });
+      console.log(`[Correct Transaction API] Dispatched Inngest insights recalculation event for user: ${userId}`);
+    } catch (inngestErr) {
+      console.error('[Correct Transaction API] Failed to trigger Inngest async event, falling back to sync:', inngestErr);
+      await generateBehavioralInsights(adminSupabase, userId);
+    }
 
     // Map database schema to Context type
     const responseTx = {

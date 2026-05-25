@@ -193,6 +193,18 @@ export const AIInsights = () => {
     analyzeSpending();
   }, [lastUpdated]);
 
+  useEffect(() => {
+    const handleInsightsUpdate = () => {
+      console.log('AIInsights: Refreshing insights from Realtime event...');
+      analyzeSpending();
+    };
+
+    window.addEventListener("fintrac:insights-updated", handleInsightsUpdate);
+    return () => {
+      window.removeEventListener("fintrac:insights-updated", handleInsightsUpdate);
+    };
+  }, []);
+
   const getIcon = (type: string) => {
     switch (type) {
       case "warning":

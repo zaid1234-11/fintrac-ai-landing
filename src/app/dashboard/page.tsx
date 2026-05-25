@@ -10,37 +10,107 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Activity, TrendingUp, Shield, Zap } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useAuth } from "@clerk/nextjs";
+import { createClient } from "@/lib/supabase/client";
 
 export default function DashboardOverview() {
   const [wellnessMetrics, setWellnessMetrics] = useState<any>(null);
   const [telemetry, setTelemetry] = useState<any>(null);
   const [showObservability, setShowObservability] = useState(false);
+  const { getToken } = useAuth();
+
+  // Fetch wellness metrics and telemetry
+  const fetchMetrics = async () => {
+    try {
+      const [wellnessRes, telemetryRes] = await Promise.all([
+        fetch('/api/behavioral-profile'),
+        fetch('/api/telemetry'),
+      ]);
+
+      if (wellnessRes.ok) {
+        const wellnessData = await wellnessRes.json();
+        setWellnessMetrics(wellnessData);
+      }
+
+      if (telemetryRes.ok) {
+        const telemetryData = await telemetryRes.json();
+        setTelemetry(telemetryData);
+      }
+    } catch (error) {
+      console.error('Error fetching metrics:', error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch wellness metrics and telemetry
-    const fetchMetrics = async () => {
+    fetchMetrics();
+  }, []);
+
+  // Set up Supabase Realtime subscriptions for async updates
+  useEffect(() => {
+    let profilesChannel: any = null;
+    let insightsChannel: any = null;
+    let supabase: any = null;
+
+    const setupRealtime = async () => {
       try {
-        const [wellnessRes, telemetryRes] = await Promise.all([
-          fetch('/api/behavioral-profile'),
-          fetch('/api/telemetry'),
-        ]);
+        const token = await getToken({ template: 'supabase' });
+        supabase = createClient();
 
-        if (wellnessRes.ok) {
-          const wellnessData = await wellnessRes.json();
-          setWellnessMetrics(wellnessData);
+        if (token) {
+          await supabase.auth.setSession({
+            access_token: token,
+            refresh_token: '',
+          });
         }
 
-        if (telemetryRes.ok) {
-          const telemetryData = await telemetryRes.json();
-          setTelemetry(telemetryData);
-        }
-      } catch (error) {
-        console.error('Error fetching metrics:', error);
+        // Subscribe to behavioral_profiles updates
+        profilesChannel = supabase
+          .channel('behavioral_profiles_changes')
+          .on(
+            'postgres_changes',
+            {
+              event: 'UPDATE',
+              schema: 'public',
+              table: 'behavioral_profiles',
+            },
+            (payload: any) => {
+              console.log('Realtime profile update:', payload);
+              fetchMetrics();
+            }
+          )
+          .subscribe();
+
+        // Subscribe to ai_insights updates
+        insightsChannel = supabase
+          .channel('ai_insights_changes')
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'public',
+              table: 'ai_insights',
+            },
+            (payload: any) => {
+              console.log('Realtime insights change:', payload);
+              window.dispatchEvent(new Event("fintrac:insights-updated"));
+            }
+          )
+          .subscribe();
+
+      } catch (err) {
+        console.error('[DashboardOverview Realtime] Failed to subscribe:', err);
       }
     };
 
-    fetchMetrics();
-  }, []);
+    setupRealtime();
+
+    return () => {
+      if (supabase) {
+        if (profilesChannel) supabase.removeChannel(profilesChannel);
+        if (insightsChannel) supabase.removeChannel(insightsChannel);
+      }
+    };
+  }, [getToken]);
 
   return (
     <div className="space-y-3 sm:space-y-4 md:space-y-6">

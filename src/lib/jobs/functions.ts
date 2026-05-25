@@ -138,3 +138,26 @@ export const processStatementUpload = inngest.createFunction(
     }
   }
 );
+
+/**
+ * Async Background Job to recalculate user insights and wellness scores.
+ * Triggers when `fintrac/user.insights.recalculate` is dispatched.
+ */
+export const recalculateUserInsights = inngest.createFunction(
+  { 
+    id: 'recalculate-user-insights', 
+    name: 'Recalculate User Insights',
+    triggers: [{ event: 'fintrac/user.insights.recalculate' }]
+  },
+  async ({ event, step }) => {
+    const { userId } = event.data;
+    const supabase = createAdminClient();
+
+    await step.run('run-behavioral-intel', async () => {
+      const { generateBehavioralInsights } = require('@/lib/ai/behavioralIntel');
+      await generateBehavioralInsights(supabase, userId);
+    });
+
+    return { success: true, userId };
+  }
+);
