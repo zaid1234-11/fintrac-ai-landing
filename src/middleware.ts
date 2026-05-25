@@ -22,7 +22,17 @@ export default clerkMiddleware(
     // updated to avoid using `eval` in production.
     contentSecurityPolicy: {
       directives: {
-        'script-src': ["'unsafe-eval'"]
+        'script-src': ["'unsafe-eval'"],
+        'connect-src': [
+          "'self'",
+          "https://clerk-telemetry.com",
+          "https://*.clerk-telemetry.com",
+          "https://api.stripe.com",
+          "https://maps.googleapis.com",
+          "https://img.clerk.com",
+          "https://*.supabase.co",
+          "wss://*.supabase.co"
+        ]
       }
     }
   }
