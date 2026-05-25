@@ -2,6 +2,9 @@
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['pdf-parse'],
+    outputFileTracingIncludes: {
+      '/api/**/*': ['./node_modules/pdf-parse/**/*'],
+    },
   },
 };
 
