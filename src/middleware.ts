@@ -32,7 +32,8 @@ export default clerkMiddleware(
           "https://maps.googleapis.com",
           "https://img.clerk.com",
           "https://*.supabase.co",
-          "wss://*.supabase.co"
+          "wss://*.supabase.co",
+          "https://www.google-analytics.com"
         ]
       }
     }
