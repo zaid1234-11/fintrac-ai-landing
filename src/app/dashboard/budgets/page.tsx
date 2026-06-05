@@ -9,6 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FrictionSimulator } from "@/components/dashboard/FrictionSimulator";
 import {
   Plus,
   TrendingUp,
@@ -28,6 +30,7 @@ const Budgets = () => {
   const { transactions } = useTransactions();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("management");
   const [formData, setFormData] = useState({
     category: "Food",
     amount: "",
@@ -124,7 +127,8 @@ const Budgets = () => {
           </p>
         </div>
 
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        {activeTab === "management" && (
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button aria-label="Add new budget">
               <Plus className="h-4 w-4 mr-2" />
@@ -228,10 +232,18 @@ const Budgets = () => {
             </div>
           </DialogContent>
         </Dialog>
+        )}
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full max-w-[400px] grid-cols-2 bg-slate-900/50 border border-white/10 p-1">
+          <TabsTrigger value="management">Budget Limits</TabsTrigger>
+          <TabsTrigger value="simulator">Friction Simulator</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="management" className="space-y-6 outline-none">
+          {/* Summary Cards */}
+          <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
@@ -417,6 +429,12 @@ const Budgets = () => {
           </CardContent>
         </Card>
       )}
+        </TabsContent>
+
+        <TabsContent value="simulator" className="outline-none">
+          <FrictionSimulator />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
