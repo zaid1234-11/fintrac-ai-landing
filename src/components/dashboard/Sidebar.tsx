@@ -13,6 +13,7 @@ import {
   CreditCard,
   ShieldCheck,
   Home,
+  PiggyBank,
 } from "lucide-react";
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -30,6 +31,7 @@ const mainNavItems = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard", end: true },
   { name: "Transactions", icon: ArrowRightLeft, path: "/dashboard/transactions" },
   { name: "Budgets", icon: TrendingUp, path: "/dashboard/budgets" },
+  { name: "Savings Optimizer", icon: PiggyBank, path: "/dashboard/savings-optimizer" },
   { name: "Invest", icon: TrendingUp, path: "/dashboard/invest" },
   { name: "Mentors", icon: Users, path: "/dashboard/mentors" },
   { name: "Chatbot", icon: Bot, path: "/dashboard/chatbot" },
