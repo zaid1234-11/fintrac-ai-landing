@@ -60,15 +60,65 @@ The goal of this project was to explore:
 
 ---
 
-## Project Structure
+## Repository Directory Structure
 
-```bash
-src/components   -> Reusable UI components
-src/pages        -> Application routes and pages
-src/contexts     -> Shared app state providers
-src/services     -> Service and integration logic
-src/utils        -> Utility helpers
-public           -> Static assets
+```text
+├── md/                         # Exhaustive Project Documentation
+│   ├── clerk_supabase_architecture.md
+│   ├── feature_documentation_1.md
+│   ├── feature_documentation_2.md
+│   ├── features_06_06_2026.md
+│   ├── implementation.md
+│   ├── implementation_plan.md
+│   ├── review.md
+│   ├── simulation_documentation.md
+│   ├── simulation_documentation_1.md
+│   ├── simulation_documentation_2.md
+│   ├── simulation_documentation_3.md
+│   ├── simulation_results_paper.md
+│   ├── test_documentation_1.md
+│   ├── test_documentation_2.md
+│   ├── tests_reproducibility.md
+│   ├── walk.md
+│   └── walkthrough.md
+│
+├── research/                   # Simulation, Ablation & Academic Figures
+│   ├── extract_results.py              # Aggregates statistics & runs t-tests
+│   ├── fintrac_ablation_experiment.py  # Ablation studies codebase
+│   ├── fintrac_ablation_study.png       # Figure 5
+│   ├── fintrac_km_survival.png          # Figure 1 (Kaplan-Meier Curves)
+│   ├── fintrac_paper_figures.py         # Generates academic figures
+│   ├── fintrac_research_figures.png     # Figure 3 (Friction Convergence)
+│   ├── fintrac_retention_distribution.png # Figure 4 (Stability Boxplot)
+│   ├── fintrac_sensitivity_alpha.png    # Figure 2 (Alpha Sweeps)
+│   ├── fintrac_simulation.py            # Diagnostic simulation
+│   ├── fintrac_simulation_final.py      # Primary 5000-user simulation engine
+│   └── verify_ablation_thresholds.py    # Ablation fatigue threshold runs
+│
+├── scripts/                    # Platform Tooling & Diagnostics
+│   └── diagnostic/
+│       ├── check-db.js
+│       ├── check-db.mjs
+│       ├── test-personality-insights.js
+│       └── trigger-parse.js
+│
+├── src/                        # Next.js 14 Frontend Application
+│   ├── app/                    # App Router and API Routes (Inngest, Clerk, Supabase)
+│   ├── components/             # Reusable UI Components (Dashboard, Simulator, etc.)
+│   ├── lib/                    # Core Libraries & AI Logic
+│   │   └── ai/
+│   │       ├── runFrictionUpdatesTests.ts  # RL updates unit tests
+│   │       └── updateFrictionWeights.ts    # Friction optimization engine
+│   └── ...
+│
+├── supabase/                   # Supabase Database Migrations
+│   └── migrations/
+│       └── 00013_friction_updates.sql  # Cryptographic ledger & RLS schema
+│
+├── README.md                   # Project Overview
+├── package.json                # Project Dependencies
+├── tsconfig.json               # TypeScript Configuration
+└── next.config.mjs             # Next.js Settings
 ```
 
 ---

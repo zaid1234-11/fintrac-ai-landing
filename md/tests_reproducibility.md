@@ -8,14 +8,14 @@ This document details the exact files, settings, and commands required to reprod
 
 ### Executing the Simulation Loop
 The full $5,000$-user Partially Observable Markov Decision Process (POMDP) simulation runs via:
-* **File:** [fintrac_simulation_final.py](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/fintrac_simulation_final.py)
-* **Command:** `python fintrac_simulation_final.py`
+* **File:** [fintrac_simulation_final.py](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/research/fintrac_simulation_final.py)
+* **Command:** `python research/fintrac_simulation_final.py`
 * **Output:** Generates `fintrac_study_final.csv` containing raw transactional records.
 
 ### Compiling Table I (Cohort Performance Metrics)
 To parse the output CSV and compute survival rates, active lifespan, compliance means, behavioral costs, t-tests ($p$-values), Cohen's $d$, and recovery metrics:
-* **File:** [extract_results.py](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/extract_results.py)
-* **Command:** `python extract_results.py`
+* **File:** [extract_results.py](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/research/extract_results.py)
+* **Command:** `python research/extract_results.py`
 * **Expected Output:**
   - Traditional Retention (Month 12): **63.54%**
   - Elastic RL Retention (Month 12): **97.08%**
@@ -29,8 +29,8 @@ To parse the output CSV and compute survival rates, active lifespan, compliance 
 ## 2. Ablation Studies (Table II)
 
 To reproduce the retention rates comparing Traditional, Static Friction-Aware, and Adaptive RL models across both the $0.33$ and $0.30$ churn fatigue thresholds:
-* **File:** [verify_ablation_thresholds.py](file:///C:/Users/zaids/.gemini/antigravity/brain/174f7e64-ede5-4546-97f9-1bc55d70a804/scratch/verify_ablation_thresholds.py)
-* **Command:** `python verify_ablation_thresholds.py`
+* **File:** [verify_ablation_thresholds.py](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/research/verify_ablation_thresholds.py)
+* **Command:** `python research/verify_ablation_thresholds.py`
 * **Expected Output Matrix:**
   - **0.33 Churn Threshold:** Traditional = **55.36%**, Static = **59.64%**, Adaptive RL = **87.26%**
   - **0.30 Churn Threshold:** Traditional = **62.82%**, Static = **68.58%**, Adaptive RL = **97.90%**
@@ -40,13 +40,13 @@ To reproduce the retention rates comparing Traditional, Static Friction-Aware, a
 ## 3. Academic Plot & Figure Generation
 
 To regenerate the publication-ready visualization charts:
-* **File:** [fintrac_paper_figures.py](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/fintrac_paper_figures.py)
-* **Command:** `python fintrac_paper_figures.py`
-* **Expected Output Files:**
-  - `fintrac_km_survival.png` (Figure 1: Kaplan-Meier Survival Curves)
-  - `fintrac_sensitivity_alpha.png` (Figure 2: Learning Rate Sensitivity curves)
-  - `fintrac_retention_distribution.png` (Figure 4: Seed Stability Distribution boxplot)
-  - `fintrac_ablation_study.png` (Figure 5: Ablation Comparison bar chart)
+* **File:** [fintrac_paper_figures.py](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/research/fintrac_paper_figures.py)
+* **Command:** `python research/fintrac_paper_figures.py`
+* **Expected Output Files (saved under research/):**
+  - `research/fintrac_km_survival.png` (Figure 1: Kaplan-Meier Survival Curves)
+  - `research/fintrac_sensitivity_alpha.png` (Figure 2: Learning Rate Sensitivity curves)
+  - `research/fintrac_retention_distribution.png` (Figure 4: Seed Stability Distribution boxplot)
+  - `research/fintrac_ablation_study.png` (Figure 5: Ablation Comparison bar chart)
 
 ---
 
