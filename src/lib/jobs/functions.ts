@@ -161,3 +161,37 @@ export const recalculateUserInsights = inngest.createFunction(
     return { success: true, userId };
   }
 );
+
+/**
+ * Monthly Cron Job to run reinforcement learning friction score updates for all active users.
+ * Runs on the 1st of every month at midnight UTC.
+ */
+export const monthlyFrictionUpdate = inngest.createFunction(
+  {
+    id: 'monthly-friction-update',
+    name: 'Monthly Friction Update Cron',
+    triggers: [{ cron: '0 0 1 * *' }]
+  },
+  async ({ step }) => {
+    const supabase = createAdminClient();
+
+    // 1. Fetch all active users
+    const users = await step.run('fetch-active-users', async () => {
+      const { data, error } = await supabase.from('users').select('id');
+      if (error) throw new Error(`Failed to fetch active users: ${error.message}`);
+      return data || [];
+    });
+
+    // 2. Perform updates for each user
+    const evaluationDate = new Date(); // Evaluates the previous calendar month
+
+    for (const user of users) {
+      await step.run(`update-friction-user-${user.id}`, async () => {
+        const { runMonthlyFrictionUpdateForUser } = require('@/lib/ai/updateFrictionWeights');
+        await runMonthlyFrictionUpdateForUser(supabase, user.id, evaluationDate);
+      });
+    }
+
+    return { updatedUsersCount: users.length };
+  }
+);

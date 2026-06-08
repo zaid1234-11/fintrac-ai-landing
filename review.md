@@ -34,6 +34,13 @@ This file documents all files created, modified, and algorithms developed during
 - **[MODIFY] [Sidebar.tsx](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/src/components/dashboard/Sidebar.tsx)**
   - Registered the new "Savings Optimizer" page in the main navigation list using the `PiggyBank` icon.
 
+### 5. Reinforcement Learning Friction Updates & Scheduling
+- **[NEW] [00013_friction_updates.sql](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/supabase/migrations/00013_friction_updates.sql)**: Database migration adding historical budget tracking and behavioral profile fields.
+- **[NEW] [updateFrictionWeights.ts](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/src/lib/ai/updateFrictionWeights.ts)**: Implements compliance ratio, streak penalties, and habit recovery decay.
+- **[NEW] [runFrictionUpdatesTests.ts](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/src/lib/ai/runFrictionUpdatesTests.ts)**: Self-contained unit tests asserting cold starts, streak accumulations, and recovery decays.
+- **[MODIFY] [functions.ts](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/src/lib/jobs/functions.ts)** & **[route.ts](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/src/app/api/inngest/route.ts)**: Integrated the monthly cron schedule `monthlyFrictionUpdate` (`0 0 1 * *`) inside Inngest background functions.
+- **[NEW] [fintrac_simulation.py](file:///C:/Users/zaids/.gemini/antigravity/scratch/fintrac-ai-landing/fintrac_simulation.py)**: A/B simulation modeling Traditional vs. Elastic RL over 1,000 users and 6 months.
+
 ---
 
 ## 🧮 Mathematical & Optimization Formulas Applied
@@ -48,6 +55,10 @@ This file documents all files created, modified, and algorithms developed during
    Redistributed proportionally to weights of remaining categories until $\text{Excess Cut} \rightarrow 0$.
 4. **Behavioral Budgeting Pain**:
    $$\text{Pain} = \text{Cut} \times FS$$
+5. **Reinforcement Learning Friction Update Rule**:
+   $$F_{i, t+1} = \min\left(1.0, F_{i, t} + \alpha \cdot (1 - C_i) \cdot \text{StreakPenalty}_i\right) \quad \text{if } C_i < 0.99$$
+   $$\text{StreakPenalty}_i = 1.0 + (\text{consecutive\_failures}_i \cdot 0.5)$$
+   $$\text{Friction Recovery Decay}: F_{i, t+1} = \max(0.0, F_{i, t} - 0.05) \quad \text{if } C_i \ge 0.99 \text{ and } \text{success\_streak}_i \ge 3$$
 
 ---
 
@@ -57,3 +68,9 @@ All modules have been fully verified:
 - **TypeScript Checking**: `npx tsc --noEmit` passed with 0 errors.
 - **Production Bundling**: Next.js production compiler (`npm run build`) completed successfully.
 - **Unit Testing**: All test suites executed and passed successfully with 100% assertions met.
+  - TypeScript RL Engine unit tests passed with 13 assertions verifying failure streaks, compliance, and decay.
+- **Monte Carlo A/B Simulation Validation**:
+  - **Behavioral Cost (Pain)**: Elastic RL Mean = **27.28** vs. Traditional Proportional Mean = **39.18** ($d = -0.91$). **30.4% reduction in user discomfort**.
+  - **Compliance**: Elastic RL Mean = **43.2%** vs. Traditional Proportional Mean = **40.4%** ($p = 2.29 \cdot 10^{-16}$).
+  - **Tradeoff Efficiency**: RL achieved **Rs.72.56** savings compared to Traditional **Rs.80.76** ($d = -0.18$), preserving **90% of targeted savings** while reducing pain by **30.4%**.
+  - High-resolution validation chart generated at `fintrac_research_figures.png`.

@@ -1,6 +1,6 @@
 import { serve } from 'inngest/next';
 import { inngest } from '@/lib/jobs/inngest-client';
-import { processStatementUpload, recalculateUserInsights } from '@/lib/jobs/functions';
+import { processStatementUpload, recalculateUserInsights, monthlyFrictionUpdate } from '@/lib/jobs/functions';
 
 export const dynamic = "force-dynamic";
 
@@ -10,5 +10,6 @@ export const { GET, POST, PUT } = serve({
   functions: [
     processStatementUpload,
     recalculateUserInsights,
+    monthlyFrictionUpdate,
   ],
 });
