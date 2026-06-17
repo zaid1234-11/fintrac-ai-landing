@@ -34,4 +34,5 @@ test-pdf-parser-class.ts
 build-output.txt
 .vercel
 *.csv
+!research/table2_raw_alpha_0.15.csv
 
