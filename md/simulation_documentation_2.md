@@ -99,9 +99,9 @@ The ablation study compared three states of knowledge under a deterministic seed
 ### 4.2 Comparison at $0.30$ Churn Fatigue Threshold
 | System Architecture | Initial Prior | Learning Enabled | Month 12 Retention Rate |
 | :--- | :---: | :---: | :---: |
-| **1. Traditional** | Equal Weights ($1.0$) | No | **62.82%** |
-| **2. Static Friction-Aware** | Perfect True Baseline | No | **68.58%** |
-| **3. Adaptive RL Engine** | Uninformed Prior ($0.5$) | Yes | **97.90%** |
+| **1. Traditional** | Equal Weights ($1.0$) | No | **62.40%** |
+| **2. Static Friction-Aware** | Perfect True Baseline | No | **69.08%** |
+| **3. Adaptive RL Engine** | Uninformed Prior ($0.5$) | Yes | **97.76%** |
 
 ![Figure 5: Ablation Comparison](C:\Users\zaids\.gemini\antigravity\brain\174f7e64-ede5-4546-97f9-1bc55d70a804\fintrac_ablation_study.png)
 
@@ -110,20 +110,20 @@ The ablation study compared three states of knowledge under a deterministic seed
 ## 5. Robustness & Validation sweeps
 
 ### 5.1 Random Seed Stability Analysis
-Swept five seeds `[1, 42, 123, 999, 2026]` under $\alpha = 0.15$:
-- **Seed 1**: $97.68\%$ retention
-- **Seed 42**: $97.90\%$ retention
-- **Seed 123**: $97.54\%$ retention
-- **Seed 999**: $97.58\%$ retention
-- **Seed 2026**: $97.98\%$ retention
-- **Mean ± SD**: **97.74% ± 0.17%**
+Swept five seeds `[1, 42, 123, 999, 2026]` under $\alpha = 0.10$:
+- **Seed 1**: $97.42\%$ retention
+- **Seed 42**: $97.76\%$ retention
+- **Seed 123**: $97.60\%$ retention
+- **Seed 999**: $97.92\%$ retention
+- **Seed 2026**: $97.96\%$ retention
+- **Mean ± SD**: **97.73% ± 0.20%**
 
 ![Figure 4: Seed Stability Distribution](C:\Users\zaids\.gemini\antigravity\brain\174f7e64-ede5-4546-97f9-1bc55d70a804\fintrac_retention_distribution.png)
 
 ### 5.2 Learning Rate ($\alpha$) Sensitivity Sweep
 Swept learning rate values under Seed 42:
 - **$\alpha = 0.05$**: $97.88\%$ retention | $46.96\%$ recovery | $44.31\%$ compliance | $116.24$ pain
-- **$\alpha = 0.10$**: $97.76\%$ retention | $10.09\%$ recovery | $45.06\%$ compliance | $114.60$ pain
+- **$\alpha = 0.10$ (selected)**: $97.76\%$ retention | $10.09\%$ recovery | $45.06\%$ compliance | $114.60$ pain
 - **$\alpha = 0.15$**: $97.90\%$ retention | $5.34\%$ recovery | $44.66\%$ compliance | $115.32$ pain
 - **$\alpha = 0.20$**: $97.82\%$ retention | $5.88\%$ recovery | $43.88\%$ compliance | $116.84$ pain
 

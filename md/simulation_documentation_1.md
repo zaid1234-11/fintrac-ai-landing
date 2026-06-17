@@ -97,14 +97,14 @@ To ensure that the outstanding performance of the Adaptive RL Engine is not an a
 
 | Seed | Month 12 Retention Rate (%) |
 | :--- | :---: |
-| **Seed 1** | $97.68\%$ |
-| **Seed 42** | $97.90\%$ |
-| **Seed 123** | $97.54\%$ |
-| **Seed 999** | $97.58\%$ |
-| **Seed 2026** | $97.98\%$ |
-| **Mean ± SD** | **97.74% ± 0.17%** |
+| **Seed 1** | $97.42\%$ |
+| **Seed 42** | $97.76\%$ |
+| **Seed 123** | $97.60\%$ |
+| **Seed 999** | $97.92\%$ |
+| **Seed 2026** | $97.96\%$ |
+| **Mean ± SD** | **97.73% ± 0.20%** |
 
-The extremely low standard deviation ($\text{SD} = 0.17\%$) demonstrates that the RL savings engine is remarkably stable and resilient to stochastic noise.
+The extremely low standard deviation ($\text{SD} = 0.20\%$) demonstrates that the RL savings engine is remarkably stable and resilient to stochastic noise.
 
 ![Figure 4: Seed Stability Distribution](C:\Users\zaids\.gemini\antigravity\brain\174f7e64-ede5-4546-97f9-1bc55d70a804\fintrac_retention_distribution.png)
 
@@ -114,7 +114,7 @@ The learning rate $\alpha$ controls how aggressively the RL engine updates its i
 | Learning Rate ($\alpha$) | Month 12 Retention (%) | Income Shock Recovery (%) | Mean Compliance (%) | Mean Monthly Pain |
 | :--- | :---: | :---: | :---: | :---: |
 | **$\alpha = 0.05$** | $97.88\%$ | $46.96\%$ | $44.31\%$ | $116.24$ |
-| **$\alpha = 0.10$** | $97.76\%$ | $10.09\%$ | $45.06\%$ | $114.60$ |
+| **$\alpha = 0.10$ (selected)** | $97.76\%$ | $10.09\%$ | $45.06\%$ | $114.60$ |
 | **$\alpha = 0.15$** | $97.90\%$ | $5.34\%$ | $44.66\%$ | $115.32$ |
 | **$\alpha = 0.20$** | $97.82\%$ | $5.88\%$ | $43.88\%$ | $116.84$ |
 
@@ -123,7 +123,7 @@ The learning rate $\alpha$ controls how aggressively the RL engine updates its i
 #### Interpretation:
 - **Retention**: Highly stable at $\sim 97.8\%$.
 - **Recovery Rate**: Higher at lower learning rates ($\alpha = 0.05$). This occurs because a slow update rate prevents the engine from overreacting to minor noise in Month 6, allowing users to stay closer to their original baseline targets.
-- **Pain vs. Compliance**: Middle values like $\alpha = 0.10$ and $0.15$ balance behavioral cost reduction with steady savings compliance.
+- **Pain vs. Compliance**: Middle values like $\alpha = 0.10$ balance behavioral cost reduction with steady savings compliance. The selected operating point of $\alpha = 0.10$ achieves the highest compliance and lowest behavioral cost.
 
 ---
 

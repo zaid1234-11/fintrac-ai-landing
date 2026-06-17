@@ -216,7 +216,7 @@ print(f"\nTotal runtime: {total_time:.1f}s ({len(ALPHAS)*len(SEEDS)} simulation 
 import os
 
 out_path = os.path.join(os.path.dirname(__file__), 'table2_empirical_results.txt')
-raw_csv_path = os.path.join(os.path.dirname(__file__), 'table2_raw_alpha_0.15.csv')
+raw_csv_path = os.path.join(os.path.dirname(__file__), 'table2_raw_alpha_0.10.csv')
 
 out_lines = []
 def log_print(msg=""):
@@ -230,7 +230,7 @@ log_print("=" * 100)
 log_print(f"{'alpha':>6}  {'Retention (%)':>20}  {'Recovery (%)':>20}  {'Compliance (%)':>20}  {'Behav. Cost':>20}")
 log_print("-" * 100)
 for r in results:
-    marker = " <-- selected" if r['alpha'] == 0.15 else ""
+    marker = " <-- selected" if r['alpha'] == 0.10 else ""
     log_print(f"{r['alpha']:>6.2f}  "
               f"{r['retention_mean']:>8.2f} +/- {r['retention_sd']:>5.2f}  "
               f"{r['recovery_mean']:>8.2f} +/- {r['recovery_sd']:>5.2f}  "
@@ -241,31 +241,31 @@ log_print("Values: mean +/- SD across 20 independent seeds.")
 log_print("=" * 100)
 
 # =========================================================
-# Per-seed raw data for alpha=0.15 (for reviewers)
+# Per-seed raw data for alpha=0.10 (for reviewers)
 # =========================================================
-r15 = results[2]
-log_print("\n\nPer-seed raw data for alpha=0.15:")
+r10 = results[1]
+log_print("\n\nPer-seed raw data for alpha=0.10:")
 log_print(f"{'Seed':>6}  {'Retention':>10}  {'Recovery':>10}  {'Compliance':>12}  {'Pain':>10}")
 log_print("-" * 56)
 for i, seed in enumerate(SEEDS):
     log_print(f"{seed:>6}  "
-              f"{r15['retention_raw'][i]:>9.2f}%  "
-              f"{r15['recovery_raw'][i]:>9.2f}%  "
-              f"{r15['compliance_raw'][i]:>11.2f}%  "
-              f"{r15['pain_raw'][i]:>10.2f}")
+              f"{r10['retention_raw'][i]:>9.2f}%  "
+              f"{r10['recovery_raw'][i]:>9.2f}%  "
+              f"{r10['compliance_raw'][i]:>11.2f}%  "
+              f"{r10['pain_raw'][i]:>10.2f}")
 
 # =========================================================
-# Statistical test: recovery alpha=0.05 vs 0.15
+# Statistical test: recovery alpha=0.05 vs 0.10
 # =========================================================
 from scipy import stats
 r05 = results[0]
-t_stat, p_val = stats.ttest_ind(r05['recovery_raw'], r15['recovery_raw'])
-pooled = np.sqrt((r05['recovery_sd']**2 + r15['recovery_sd']**2) / 2)
-d = abs(r05['recovery_mean'] - r15['recovery_mean']) / pooled if pooled > 0 else float('inf')
+t_stat, p_val = stats.ttest_ind(r05['recovery_raw'], r10['recovery_raw'])
+pooled = np.sqrt((r05['recovery_sd']**2 + r10['recovery_sd']**2) / 2)
+d = abs(r05['recovery_mean'] - r10['recovery_mean']) / pooled if pooled > 0 else float('inf')
 
-log_print(f"\n\nRecovery comparison (alpha=0.05 vs 0.15):")
+log_print(f"\n\nRecovery comparison (alpha=0.05 vs 0.10):")
 log_print(f"  0.05: {r05['recovery_mean']:.2f} +/- {r05['recovery_sd']:.2f}%")
-log_print(f"  0.15: {r15['recovery_mean']:.2f} +/- {r15['recovery_sd']:.2f}%")
+log_print(f"  0.10: {r10['recovery_mean']:.2f} +/- {r10['recovery_sd']:.2f}%")
 log_print(f"  t = {t_stat:.4f}, p = {p_val:.2e}")
 log_print(f"  Cohen's d = {d:.2f} ({'large' if d > 0.8 else 'medium' if d > 0.5 else 'small'})")
 
@@ -282,10 +282,10 @@ with open(raw_csv_path, 'w', newline='', encoding='utf-8') as f:
     for i, seed in enumerate(SEEDS):
         writer.writerow([
             seed,
-            r15['retention_raw'][i],
-            r15['recovery_raw'][i],
-            r15['compliance_raw'][i],
-            r15['pain_raw'][i]
+            r10['retention_raw'][i],
+            r10['recovery_raw'][i],
+            r10['compliance_raw'][i],
+            r10['pain_raw'][i]
         ])
 log_print(f"Saved raw per-seed data to: {raw_csv_path}")
 

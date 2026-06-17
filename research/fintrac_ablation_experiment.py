@@ -9,7 +9,7 @@ NUM_USERS = 5000
 MONTHS = 12
 CATEGORIES = ['Dining', 'Shopping', 'Subscriptions', 'Entertainment']
 BASE_TARGET_SAVINGS = 200.0
-LEARNING_RATE_ALPHA = 0.15
+LEARNING_RATE_ALPHA = 0.10
 
 # Personas designed to test specific algorithmic weaknesses
 # Income_Shock kills Traditional. Seasonal_Spender kills Static.

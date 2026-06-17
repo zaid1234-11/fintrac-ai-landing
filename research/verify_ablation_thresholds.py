@@ -5,7 +5,7 @@ NUM_USERS = 5000
 MONTHS = 12
 CATEGORIES = ['Dining', 'Shopping', 'Subscriptions', 'Entertainment']
 BASE_TARGET_SAVINGS = 200.0
-LEARNING_RATE_ALPHA = 0.15
+LEARNING_RATE_ALPHA = 0.10
 PERSONAS = ['Aspirational_Saver', 'Income_Shock', 'Seasonal_Spender']
 PERSONA_PROBS = [0.4, 0.3, 0.3]
 
@@ -148,9 +148,9 @@ def run_simulation(seed, alpha, churn_threshold):
     }
 
 print("Running with 0.33 threshold...")
-res_33 = run_simulation(seed=42, alpha=0.15, churn_threshold=0.33)
+res_33 = run_simulation(seed=42, alpha=0.10, churn_threshold=0.33)
 print(res_33)
 
 print("Running with 0.30 threshold...")
-res_30 = run_simulation(seed=42, alpha=0.15, churn_threshold=0.30)
+res_30 = run_simulation(seed=42, alpha=0.10, churn_threshold=0.30)
 print(res_30)

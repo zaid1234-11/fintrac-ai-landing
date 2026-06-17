@@ -91,7 +91,7 @@ export async function runMonthlyFrictionUpdateForUser(
   userId: string,
   evaluationDate: Date
 ): Promise<void> {
-  const learningRate = 0.15;
+  const learningRate = 0.10;
   const decayRate = 0.05; // Friction recovery decay for perfect compliance
   const recoveryThreshold = 3; // Months of consecutive compliance required for decay
 
@@ -306,35 +306,35 @@ Month 1: User Ignores Shopping Target
 1. AI Suggested Cuts: Shopping = ₹2,000, Dining = ₹1,000.
 2. User Behavior: Ignores Shopping, spends ₹10,000.
 3. Outcome: Shopping compliance = 0.0, streak = 1 failure.
-4. Update: F_shopping = 0.20 + 0.15 * (1 - 0) * 1.0 = 0.35.
+4. Update: F_shopping = 0.20 + 0.10 * (1 - 0) * 1.0 = 0.30.
 
 Month 2: Shopping Friction Adjusts upward
 ------------------------------------------------------------
 1. AI Suggested Cuts: Shopping = ₹1,400, Dining = ₹1,600.
 2. User Behavior: Ignores Shopping again, spends ₹10,000.
 3. Outcome: Shopping compliance = 0.0, streak = 2 failures.
-4. Update: F_shopping = 0.35 + 0.15 * (1 - 0) * 1.5 = 0.575.
+4. Update: F_shopping = 0.30 + 0.10 * (1 - 0) * 1.5 = 0.45.
 
 Month 3: Shopping Is Highly Rigid
 ------------------------------------------------------------
 1. AI Suggested Cuts: Shopping = ₹500, Dining = ₹2,500.
 2. User Behavior: Spends ₹10,000 on Shopping.
 3. Outcome: Shopping compliance = 0.0, streak = 3 failures.
-4. Update: F_shopping = 0.575 + 0.15 * (1 - 0) * 2.0 = 0.875.
+4. Update: F_shopping = 0.45 + 0.10 * (1 - 0) * 2.0 = 0.65.
 
 Month 4: Immutability Lock Met
 ------------------------------------------------------------
 1. AI Suggested Cuts: Shopping = ₹0, Dining = ₹3,000.
 2. User Behavior: Shopping is protected. User achieves perfect compliance (C = 1.0).
 3. Outcome: Shopping compliance = 1.0, failure streak resets to 0. compliance_streak = 1.
-4. Update: F_shopping remains 0.875.
+4. Update: F_shopping remains 0.65.
 
 Months 5 & 6: Continued Compliance (Habit Formation)
 ------------------------------------------------------------
-- Month 5: Perfect compliance. compliance_streak = 2. F_shopping = 0.875.
+- Month 5: Perfect compliance. compliance_streak = 2. F_shopping = 0.65.
 - Month 6: Perfect compliance. compliance_streak = 3. 
   Cooldown threshold (3 months) met! Apply recovery decay:
-  F_shopping = 0.875 - 0.05 = 0.825.
+  F_shopping = 0.65 - 0.05 = 0.60.
 ```
 
 ---

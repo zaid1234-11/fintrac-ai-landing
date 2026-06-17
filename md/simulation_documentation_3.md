@@ -109,17 +109,17 @@ We evaluated a cohort of $N=5,000$ users over a 12-month timeline, comparing the
 
 | Metric | Treatment (Elastic RL) | Control (Traditional) | Performance Delta | Statistical Significance |
 | :--- | :---: | :---: | :---: | :---: |
-| **Month 12 Retention Rate** | $97.08\%$ | $63.54\%$ | $+33.54\%$ (absolute) | $\chi^2(1) = 1723.1, p < 0.001$ |
-| **Mean Active Lifespan** | $11.78$ months | $9.56$ months | $+2.22$ months ($+23.2\%$) | $t(9821) = 52.12, p < 0.001$ |
-| **Mean Compliance Ratio** | $41.63\%$ ($\text{SD} = 8.05\%$) | $38.61\%$ ($\text{SD} = 9.60\%$) | $+3.02\%$ ($+7.8\%$) | $t = 55.86, p < 0.001$, $d = 0.34$ |
-| **Mean Monthly Behavioral Cost (Pain)** | $115.22$ ($\text{SD} = 27.34$) | $115.75$ ($\text{SD} = 18.65$) | $-0.53$ | $t = -3.61, p < 0.001$, $d = -0.02$ |
+| **Month 12 Retention Rate** | $97.76\%$ | $62.40\%$ | $+35.36\%$ (absolute) | $p < 0.001$ |
+| **Mean Active Lifespan** | $11.81$ months | $9.23$ months | $+2.57$ months | $p < 0.001$ |
+| **Mean Compliance Ratio** | $45.06\%$ | $38.58\%$ | $+6.48\%$ | $t = 90.11, p < 0.001$, $d = 0.56$ |
+| **Mean Monthly Behavioral Cost (Pain)** | $114.60$ | $115.89$ | $-1.29$ | $t = -8.24, p < 0.001$, $d = -0.05$ |
 
 ![Figure 1: Kaplan-Meier Survival Curves](C:\Users\zaids\.gemini\antigravity\brain\174f7e64-ede5-4546-97f9-1bc55d70a804\fintrac_km_survival.png)
 
 ### 4.2 Post-Shock Recovery for Income Shock Victims
-At Month 6, $1,497$ users experienced an income shock (friction surged by $+0.10$, target fell to $75\%$).
-- **Recovery Rate**: **14.43%** ($216$ users) returned to $\ge 90\%$ of their pre-shock compliance baseline for 2 consecutive months.
-- **Mean Month of Recovery**: **Month 9.66** (3.66 months post-shock).
+At Month 6, $1,500$ users experienced an income shock (friction surged by $+0.10$, target fell to $75\%$).
+- **Recovery Rate**: **10.09%** ($151$ users) returned to $\ge 90\%$ of their pre-shock compliance baseline for 2 consecutive months.
+- **Mean Month of Recovery**: **Month 9.7** (3.7 months post-shock).
 
 ---
 
@@ -133,16 +133,16 @@ To evaluate the contribution of active learning, we compared:
 ### 5.1 Comparison under $0.33$ Churn Fatigue Threshold
 | System Architecture | Initial Prior | Learning Enabled | Month 12 Retention Rate |
 | :--- | :---: | :---: | :---: |
-| **1. Traditional** | Equal Weights ($1.0$) | No | **55.36%** |
-| **2. Static Friction-Aware** | Perfect True Baseline | No | **59.64%** |
-| **3. Adaptive RL Engine** | Uninformed Prior ($0.5$) | Yes | **87.26%** |
+| **1. Traditional** | Equal Weights ($1.0$) | No | **55.02%** |
+| **2. Static Friction-Aware** | Perfect True Baseline | No | **59.76%** |
+| **3. Adaptive RL Engine** | Uninformed Prior ($0.5$) | Yes | **87.66%** |
 
 ### 5.2 Comparison under $0.30$ Churn Fatigue Threshold
 | System Architecture | Initial Prior | Learning Enabled | Month 12 Retention Rate |
 | :--- | :---: | :---: | :---: |
-| **1. Traditional** | Equal Weights ($1.0$) | No | **62.82%** |
-| **2. Static Friction-Aware** | Perfect True Baseline | No | **68.58%** |
-| **3. Adaptive RL Engine** | Uninformed Prior ($0.5$) | Yes | **97.90%** |
+| **1. Traditional** | Equal Weights ($1.0$) | No | **62.40%** |
+| **2. Static Friction-Aware** | Perfect True Baseline | No | **69.08%** |
+| **3. Adaptive RL Engine** | Uninformed Prior ($0.5$) | Yes | **97.76%** |
 
 ![Figure 5: Ablation Comparison](C:\Users\zaids\.gemini\antigravity\brain\174f7e64-ede5-4546-97f9-1bc55d70a804\fintrac_ablation_study.png)
 
@@ -151,20 +151,20 @@ To evaluate the contribution of active learning, we compared:
 ## 6. Robustness & Validation Sweeps
 
 ### 6.1 Random Seed Stability Analysis
-Swept five seeds `[1, 42, 123, 999, 2026]` under $\alpha = 0.15$:
-- **Seed 1**: $97.68\%$ retention
-- **Seed 42**: $97.90\%$ retention
-- **Seed 123**: $97.54\%$ retention
-- **Seed 999**: $97.58\%$ retention
-- **Seed 2026**: $97.98\%$ retention
-- **Mean ± SD**: **97.74% ± 0.17%** (Highly stable)
+Swept five seeds `[1, 42, 123, 999, 2026]` under $\alpha = 0.10$:
+- **Seed 1**: $97.42\%$ retention
+- **Seed 42**: $97.76\%$ retention
+- **Seed 123**: $97.60\%$ retention
+- **Seed 999**: $97.92\%$ retention
+- **Seed 2026**: $97.96\%$ retention
+- **Mean ± SD**: **97.73% ± 0.20%** (Highly stable)
 
 ![Figure 4: Seed Stability Distribution](C:\Users\zaids\.gemini\antigravity\brain\174f7e64-ede5-4546-97f9-1bc55d70a804\fintrac_retention_distribution.png)
 
 ### 6.2 Learning Rate ($\alpha$) Sensitivity Sweep
 Swept learning rates under Seed 42:
 - **$\alpha = 0.05$**: $97.88\%$ retention | $46.96\%$ recovery | $44.31\%$ compliance | $116.24$ pain
-- **$\alpha = 0.10$**: $97.76\%$ retention | $10.09\%$ recovery | $45.06\%$ compliance | $114.60$ pain
+- **$\alpha = 0.10$ (selected)**: $97.76\%$ retention | $10.09\%$ recovery | $45.06\%$ compliance | $114.60$ pain
 - **$\alpha = 0.15$**: $97.90\%$ retention | $5.34\%$ recovery | $44.66\%$ compliance | $115.32$ pain
 - **$\alpha = 0.20$**: $97.82\%$ retention | $5.88\%$ recovery | $43.88\%$ compliance | $116.84$ pain
 

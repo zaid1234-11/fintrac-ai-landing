@@ -21,18 +21,18 @@ A primary bottleneck of retail financial tools is early user abandonment due to 
 
 ```
 User Retention Rate at Month 12:
-- Elastic RL (Treatment):  97.08% (4,854 / 5,000 users retained)
-- Traditional (Control):   63.54% (3,177 / 5,000 users retained)
-- Relative Improvement:    +52.79% (p < 0.001)
+- Elastic RL (Treatment):  97.76% (4,888 / 5,000 users retained)
+- Traditional (Control):   62.40% (3,120 / 5,000 users retained)
+- Relative Improvement:    +56.67% (p < 0.001)
 ```
 
-The difference in survival curves indicates that traditional budgeting induces rapid user burnout. As shown in **Table 1**, the average active lifespan of a user in the Traditional cohort was only **$9.56$ months** ($\text{SD} = 2.98$) before they abandoned the application. In contrast, users under the Elastic RL framework remained active for an average of **$11.78$ months** ($\text{SD} = 1.02$), representing a **$23.2\%$ increase in user lifespan**.
+The difference in survival curves indicates that traditional budgeting induces rapid user burnout. As shown in **Table 1**, the average active lifespan of a user in the Traditional cohort was only **$9.23$ months** before they abandoned the application. In contrast, users under the Elastic RL framework remained active for an average of **$11.81$ months**, representing a **$27.9\%$ increase in user lifespan**.
 
 ### Table 1: User Survival and Retention Metrics
 | Metric | Treatment (Elastic RL) | Control (Traditional) | Performance Delta | Statistical Significance |
 | :--- | :---: | :---: | :---: | :---: |
-| **Month 12 Retention Rate** | $97.08\%$ | $63.54\%$ | $+33.54\%$ (absolute) | $\chi^2(1) = 1723.1, p < 0.001$ |
-| **Mean Lifespan (Months)** | $11.78$ | $9.56$ | $+2.22$ months ($+23.2\%$) | $t(9821) = 52.12, p < 0.001$ |
+| **Month 12 Retention Rate** | $97.76\%$ | $62.40\%$ | $+35.36\%$ (absolute) | $p < 0.001$ |
+| **Mean Lifespan (Months)** | $11.81$ | $9.23$ | $+2.58$ months ($+27.9\%$) | $p < 0.001$ |
 
 This survival gap highlights the core thesis of behavioral finance: **rigid, uniform budget targets create high psychological friction, leading to platform abandonment.** By dynamically rerouting cuts away from high-friction categories, the Elastic RL engine prevents early attrition.
 
@@ -46,20 +46,20 @@ An independent samples t-test was conducted to compare the compliance ratios of 
 
 ```
 Mean Compliance Ratio:
-- Elastic RL (Treatment):  41.63% (SD = 8.05%)
-- Traditional (Control):   38.61% (SD = 9.60%)
-- Statistical Test:        t = 55.86, p = 0.0000 (p < 0.001)
-- Effect Size (Cohen's d): 0.34
+- Elastic RL (Treatment):  45.06%
+- Traditional (Control):   38.58%
+- Statistical Test:        t = 90.11, p < 0.001
+- Effect Size (Cohen's d): 0.56
 ```
 
-The treatment group achieved a statistically significant improvement in compliance compared to the control group ($p < 0.001$). The effect size of **Cohen's $d = 0.34$** indicates a moderate, practically meaningful shift in behavior.
+The treatment group achieved a statistically significant improvement in compliance compared to the control group ($p < 0.001$). The effect size of **Cohen's $d = 0.56$** indicates a moderate, practically meaningful shift in behavior.
 
 ### Statistical Validation of Behavioral Cost
 We also evaluated the mean monthly behavioral cost (pain) among active records.
-- **Elastic RL**: $115.22$ ($\text{SD} = 27.34$)
-- **Traditional**: $115.75$ ($\text{SD} = 18.65$)
-- **Statistical Test**: $t = -3.61$, $p = 3.04 \cdot 10^{-4}$ ($p < 0.001$)
-- **Effect Size (Cohen's d)**: $-0.02$
+- **Elastic RL**: $114.60$
+- **Traditional**: $115.89$
+- **Statistical Test**: $t = -8.24, p < 0.001$
+- **Effect Size (Cohen's d)**: $-0.05$
 
 Even with the presence of **survival bias (attrition filtering)** in the control group—where high-friction users in the Traditional cohort churned early and removed their high-pain data points from the active average—the Elastic RL engine achieved a statistically significant reduction in behavioral cost ($p < 0.001$) compared to the Traditional group. This proves that the RL engine actively reduces daily friction for its users.
 
@@ -67,18 +67,18 @@ Even with the presence of **survival bias (attrition filtering)** in the control
 
 ## 4. Resilience & Relative Recovery (Post-Shock Adaptability)
 
-To evaluate the system's resilience under financial distress, we analyzed the $N = 1,497$ users subjected to the **Income Shock** persona. At Month 6, these users experienced a moderate income disruption, represented by a $10\%$ increase in true category frictions and a corresponding $25\%$ reduction in savings capacity.
+To evaluate the system's resilience under financial distress, we analyzed the $N = 1,500$ users subjected to the **Income Shock** persona. At Month 6, these users experienced a moderate income disruption, represented by a $10\%$ increase in true category frictions and a corresponding $25\%$ reduction in savings capacity.
 
 Under the Elastic RL model, we tracked **Relative Recovery**, defined as a user returning to at least $90\%$ of their personal pre-shock baseline compliance (established during Months 1–5) for two consecutive months.
 
 ```
 Relative Recovery Metrics (Income Shock Cohort):
-- Total Shock Cohort:     1,497 users
-- Recovered Users:         216 users (14.43% recovery rate)
-- Mean Month of Recovery:  Month 9.66 (3.66 months post-shock)
+- Total Shock Cohort:     1,500 users
+- Recovered Users:         151 users (10.09% recovery rate)
+- Mean Month of Recovery:  Month 9.7 (3.7 months post-shock)
 ```
 
-Under these moderate constraints, the Elastic RL engine successfully guided **14.43%** ($216$ users) of shocked users back to their personalized pre-shock compliance baselines. The mean recovery time was **Month 9.66** (3.66 months post-shock), proving the efficacy of adaptive friction re-weighting in standard financial environments.
+Under these moderate constraints, the Elastic RL engine successfully guided **10.09%** ($151$ users) of shocked users back to their personalized pre-shock compliance baselines. The mean recovery time was **Month 9.7** (3.7 months post-shock), proving the efficacy of adaptive friction re-weighting in standard financial environments.
 
 ---
 

@@ -246,8 +246,8 @@ def run_simulation(seed, alpha):
 # ---------------------------------------------------------
 # Execution: Step 1. Generate Kaplan-Meier & Ablation Plots
 # ---------------------------------------------------------
-print("Generating Kaplan-Meier and Ablation graphs (Seed=42, alpha=0.15)...")
-res_base = run_simulation(seed=42, alpha=0.15)
+print("Generating Kaplan-Meier and Ablation graphs (Seed=42, alpha=0.10)...")
+res_base = run_simulation(seed=42, alpha=0.10)
 counts = res_base['survival_counts']
 
 # Figure 1: Kaplan-Meier Survival Curves
@@ -299,7 +299,7 @@ seeds = [1, 42, 123, 999, 2026]
 stability_retentions = []
 print("\nRunning Random Seed Stability Analysis...")
 for s in seeds:
-    res = run_simulation(seed=s, alpha=0.15)
+    res = run_simulation(seed=s, alpha=0.10)
     ret = res['rl_metrics']['retention']
     stability_retentions.append(ret)
     print(f"  Seed {s:4d} | Adaptive RL Retention: {ret:.2f}%")

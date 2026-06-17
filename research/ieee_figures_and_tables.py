@@ -281,12 +281,12 @@ def run_full_simulation(seed, alpha, churn_threshold=0.30):
     }
 
 # =========================================================
-# Run Primary Simulation (Seed 42, alpha 0.15)
+# Run Primary Simulation (Seed 42, alpha 0.10)
 # =========================================================
 print("="*60)
-print("  Running primary simulation (N=5000, seed=42, alpha=0.15)...")
+print("  Running primary simulation (N=5000, seed=42, alpha=0.10)...")
 print("="*60)
-res = run_full_simulation(seed=42, alpha=0.15)
+res = run_full_simulation(seed=42, alpha=0.10)
 
 # =========================================================
 # TABLE I – Cohort Performance Summary
@@ -405,7 +405,7 @@ print("\nRunning seed stability sweep (seeds: 1, 42, 123, 999, 2026)...")
 seeds = [1, 42, 123, 999, 2026]
 seed_rets = []
 for s in seeds:
-    r = run_full_simulation(seed=s, alpha=0.15)
+    r = run_full_simulation(seed=s, alpha=0.10)
     seed_rets.append(r['ret_rl'])
     print(f"  Seed {s:4d}: {r['ret_rl']:.2f}%")
 
@@ -452,7 +452,7 @@ print("="*80)
 print(f"{'alpha':>6}{'Retention (%)':>16}{'Recovery (%)':>14}{'Compliance (%)':>16}{'Pain':>10}")
 print("-"*62)
 for r in sens_rows:
-    marker = " *" if r['alpha'] == 0.15 else ""
+    marker = " *" if r['alpha'] == 0.10 else ""
     print(f"{r['alpha']:>6.2f}{r['retention']:>15.2f}%{r['recovery']:>13.2f}%{r['compliance']:>15.2f}%{r['pain']:>10.2f}{marker}")
 print("-"*62)
 print("* Selected operating point")
@@ -461,7 +461,7 @@ print("="*80)
 # =========================================================
 # FIGURE 5 – Ablation Study Bar Chart
 # =========================================================
-# Use primary run (seed=42, α=0.15) which already has all three models
+# Use primary run (seed=42, α=0.10) which already has all three models
 fig, ax = plt.subplots(figsize=(IEEE_COL_WIDTH, 2.2))
 models = ['Traditional\nBudgeting', 'Static\nFriction-Aware', 'Adaptive\nRL Engine']
 rets = [res['ret_trad'], res['ret_static'], res['ret_rl']]
@@ -488,12 +488,12 @@ print("\nSaved Fig. 5 (Ablation Study)")
 # TABLE III – Ablation Study Comparison (dual threshold)
 # =========================================================
 print("\nRunning ablation at two churn thresholds...")
-res_33 = run_full_simulation(seed=42, alpha=0.15, churn_threshold=0.33)
-res_30 = run_full_simulation(seed=42, alpha=0.15, churn_threshold=0.30)
+res_33 = run_full_simulation(seed=42, alpha=0.10, churn_threshold=0.33)
+res_30 = run_full_simulation(seed=42, alpha=0.10, churn_threshold=0.30)
 
 print("\n")
 print("="*80)
-print("  TABLE III: ABLATION STUDY COMPARISON (Seed = 42, alpha = 0.15)")
+print("  TABLE III: ABLATION STUDY COMPARISON (Seed = 42, alpha = 0.10)")
 print("="*80)
 print(f"{'Architecture':<28}{'Initial Prior':<20}{'Learning':<10}{'t=0.33':>12}{'t=0.30':>12}")
 print("-"*80)
@@ -522,7 +522,7 @@ for ax, (col, ylabel, mkr, clr) in zip(axes.flat, metrics):
     ax.set_xticks(alphas)
     ax.grid(True, linewidth=0.3, alpha=0.4)
     # Highlight optimal
-    ax.axvline(x=0.15, color='red', linestyle=':', linewidth=0.4, alpha=0.5)
+    ax.axvline(x=0.10, color='red', linestyle=':', linewidth=0.4, alpha=0.5)
 
 fig.tight_layout(pad=0.8)
 fig.savefig(os.path.join(OUT_DIR, 'fig6_sensitivity_panel.png'))

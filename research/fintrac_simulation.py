@@ -12,7 +12,7 @@ NUM_USERS = 1000
 MONTHS = 6
 CATEGORIES = ['Dining', 'Shopping', 'Subscriptions', 'Entertainment']
 TARGET_MONTHLY_SAVINGS = 200.0
-LEARNING_RATE_ALPHA = 0.15
+LEARNING_RATE_ALPHA = 0.10
 
 PERSONAS = ['Balanced', 'Impulse_Shopper', 'Rigid_Creature']
 

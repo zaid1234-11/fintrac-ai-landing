@@ -25,7 +25,7 @@ export async function runMonthlyFrictionUpdateForUser(
   userId: string,
   evaluationDate: Date
 ): Promise<void> {
-  const learningRate = 0.15;
+  const learningRate = 0.10;
   const decayRate = 0.05; // Friction recovery decay for perfect compliance
   const recoveryThreshold = 3; // Months of consecutive compliance required for decay
 
