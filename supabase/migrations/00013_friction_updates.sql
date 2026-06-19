@@ -15,10 +15,24 @@ CREATE TABLE IF NOT EXISTS public.historical_budgets (
 -- Enable RLS on historical_budgets
 ALTER TABLE public.historical_budgets ENABLE ROW LEVEL SECURITY;
 
--- Select/Insert policies for users
-CREATE POLICY "Users can manage own historical budgets"
-    ON public.historical_budgets FOR ALL
-    USING (user_id = auth.uid() OR user_id = (SELECT id FROM public.users WHERE id = auth.uid()));
+-- Granular RLS policies using public.clerk_user_id()
+-- Note: auth.uid() cannot be used here because user_id is TEXT and auth.uid() returns UUID.
+-- public.clerk_user_id() reads the 'sub' claim from the Clerk JWT and returns TEXT.
+CREATE POLICY "Users can view own historical budgets"
+    ON public.historical_budgets FOR SELECT
+    USING (public.clerk_user_id() = user_id);
+
+CREATE POLICY "Users can insert own historical budgets"
+    ON public.historical_budgets FOR INSERT
+    WITH CHECK (public.clerk_user_id() = user_id);
+
+CREATE POLICY "Users can update own historical budgets"
+    ON public.historical_budgets FOR UPDATE
+    USING (public.clerk_user_id() = user_id);
+
+CREATE POLICY "Users can delete own historical budgets"
+    ON public.historical_budgets FOR DELETE
+    USING (public.clerk_user_id() = user_id);
 
 -- 2. Behavioral Profile Additions
 ALTER TABLE public.behavioral_profiles
