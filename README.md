@@ -22,22 +22,24 @@
 
 Unlike traditional budget apps that apply rigid, equal spending cuts across all categories, FinTrac AI's **Elastic RL Savings Engine** continuously learns each user's unique spending psychology — routing cuts to low-friction categories, protecting psychologically sensitive areas, and auto-recovering from financial shocks like income disruptions or seasonal spending surges.
 
-> **Core Hypothesis**: The primary cause of budgeting app abandonment is not lack of willpower — it is *psychologically misallocated* spending pressure. By modeling behavioral friction as a dynamic, learnable signal, FinTrac AI achieves a **97.08% 12-month user retention rate** versus **63.54%** for traditional proportional budgeting — a statistically significant absolute improvement of **+33.54%**.
+> **Core Hypothesis**: The primary cause of budgeting app abandonment is not lack of willpower — it is *psychologically misallocated* spending pressure. In a Monte Carlo simulation of 5,000 synthetic users under modeled behavioral assumptions, the Elastic RL engine achieved **97.08% 12-month retention** versus **63.54%** for traditional proportional budgeting — a statistically significant difference of **+33.54 pp** within the simulation. Real-world validation through user studies is the next step.
 
 ---
 
-## Key Results at a Glance
+## Simulation Results at a Glance
 
-| Metric | Elastic RL Engine | Traditional Budgeting | Delta |
+> **Important**: All figures below are outcomes of a **Monte Carlo simulation** over 5,000 synthetic users with manually specified behavioral parameters. They are **not** empirical findings from real-world users. See [Validation Status](#validation-status) for a full breakdown of what is and is not yet validated.
+
+| Metric | Elastic RL (Simulated) | Traditional (Simulated) | Delta |
 | :--- | :---: | :---: | :---: |
-| **Month 12 User Retention** | **97.08%** | 63.54% | **+33.54 pp** |
+| **Month 12 Retention** | **97.08%** | 63.54% | **+33.54 pp** |
 | **Mean Active Lifespan** | **11.78 months** | 9.56 months | **+23.2%** |
 | **Mean Savings Compliance** | **41.63%** | 38.61% | **+7.8%** |
 | **Mean Behavioral Cost** | **115.22 units** | 115.75 units | **-0.5%** |
-| **Cohort Size** | 5,000 users | 5,000 users | — |
+| **Cohort Size (Synthetic)** | 5,000 agents | 5,000 agents | — |
 | **Simulation Horizon** | 12 months | 12 months | — |
 
-*Validated via two-sample t-tests, chi-squared tests, and Cohen's d effect sizes.*
+*Statistical comparisons (t-tests, chi-squared, Cohen's d) are performed on simulation outputs. They confirm internal consistency of the model, not real-world effect sizes.*
 
 ---
 
@@ -45,14 +47,15 @@ Unlike traditional budget apps that apply rigid, equal spending cuts across all 
 
 1. [Architecture Overview](#1-architecture-overview)
 2. [The Elastic RL Savings Engine](#2-the-elastic-rl-savings-engine)
-3. [Key Features](#3-key-features)
-4. [Tech Stack](#4-tech-stack)
-5. [Repository Structure](#5-repository-structure)
-6. [Getting Started](#6-getting-started)
-7. [Reproducing Research Results](#7-reproducing-research-results)
-8. [Documentation Index](#8-documentation-index)
-9. [Author](#9-author)
-10. [License](#10-license)
+3. [Validation Status](#3-validation-status)
+4. [Key Features](#4-key-features)
+5. [Tech Stack](#5-tech-stack)
+6. [Repository Structure](#6-repository-structure)
+7. [Getting Started](#7-getting-started)
+8. [Reproducing Simulation Results](#8-reproducing-simulation-results)
+9. [Documentation Index](#9-documentation-index)
+10. [Author](#10-author)
+11. [License](#11-license)
 
 ---
 
@@ -120,21 +123,23 @@ On habit streak >= 3:   F_hat(t+1,c) = F_hat(t,c) - 0.05
 
 Where `alpha = 0.15` is the learning rate and `obs` is the observed compliance signal with Gaussian noise N(0, 0.05).
 
-### Ablation Study: Why Active Learning Beats Perfect Profiling
+### Ablation Study: Why Active Learning Beats Perfect Profiling *(Simulated)*
 
-| System | Initial Knowledge | Active Learning | Month 12 Retention |
+All figures are from a deterministic simulation (seed=42, N=5,000). Behavioral personas were manually specified design assumptions, not discovered from data.
+
+| System | Initial Knowledge | Active Learning | Simulated Month 12 Retention |
 | :--- | :---: | :---: | :---: |
 | Traditional Budgeting | None | No | 62.82% |
 | Static Friction-Aware | Perfect baseline | No | 68.58% |
 | **Elastic RL Engine** | Uninformed prior (0.5) | **Yes** | **97.90%** |
 
-The key insight: **dynamic adaptation beats even perfect initial profiling**. A static model with perfect knowledge still fails when users experience income shocks or seasonal spending surges — because it cannot re-route cuts in real time.
+The simulation demonstrates a key theoretical principle: **dynamic adaptation outperforms even perfect static profiling** under modeled shock conditions. Whether this magnitude holds in real-world deployments requires user studies to confirm.
 
-### Seed Stability (Reproducibility)
+### Simulation Stability (Reproducibility)
 
-The engine was validated across 5 random seeds. The extremely low standard deviation confirms robustness:
+The simulation was run across 5 random seeds. The low standard deviation confirms the outcome is stable under the model's assumptions — not an artifact of one lucky initialization:
 
-| Seed | Month 12 Retention |
+| Seed | Simulated Month 12 Retention |
 | :---: | :---: |
 | 1 | 97.42% |
 | 42 | 97.76% |
@@ -145,7 +150,49 @@ The engine was validated across 5 random seeds. The extremely low standard devia
 
 ---
 
-## 3. Key Features
+## 3. Validation Status
+
+This section is a direct and honest assessment of what has and has not been empirically validated.
+
+### What IS validated
+
+| Component | Status | Evidence |
+| :--- | :---: | :--- |
+| **RL algorithm correctness** | ✅ Validated | 13 deterministic unit tests pass (Q-learning updates, streak logic, decay thresholds) |
+| **Simulation reproducibility** | ✅ Validated | Identical outputs across all seeds with `np.random.seed(42)`; full scripts in `research/` |
+| **Statistical internal consistency** | ✅ Validated | t-tests and chi-squared on simulation outputs confirm the model behaves as designed |
+| **Application architecture** | ✅ Validated | Production Next.js app with Clerk auth, Supabase RLS, Inngest pipelines, and GPT-4o-mini integration |
+| **Transaction parsing logic** | ✅ Validated | PDF and SMS parsers tested against real statement formats |
+
+### What is NOT yet validated
+
+| Claim | Current Status | What is Needed |
+| :--- | :---: | :--- |
+| **97.08% retention** | ⚠️ Simulation only | Real-world A/B test or longitudinal user study |
+| **+33.54 pp retention advantage** | ⚠️ Simulation only | Controlled trial: RL allocation vs. equal-split allocation on real users |
+| **14.43% income shock recovery rate** | ⚠️ Simulation only | Real user cohort experiencing income disruption |
+| **Behavioral personas** (Aspirational Saver, Income Shock, Seasonal Spender) | ⚠️ Design assumptions | Data-driven persona discovery from real transaction histories |
+| **Behavioral cost (pain unit) measurements** | ⚠️ Proxy metric | Psychometric validation (e.g., user-reported friction surveys) |
+
+### The honest summary
+
+> FinTrac AI is a well-engineered behavioral-finance platform with a scientifically structured simulation framework that provides strong internal evidence that friction-aware budgeting *could* outperform traditional budgeting under the modeled conditions.
+>
+> The methodology is rigorous and reproducible. The robustness checks (ablation, seed sweeps, learning rate sensitivity) strengthen confidence in the model's theoretical predictions.
+>
+> However, every major quantitative result — retention rates, compliance deltas, recovery rates — comes from synthetic agents with manually specified behavioral parameters, not from real users. Real-world user studies are the required next step to validate the magnitude of these benefits.
+
+### Roadmap to full empirical validation
+
+1. **Option A — Small pilot**: 50 real users, 3 months, live transaction data. Compare RL allocation vs. equal-split allocation.
+2. **Option B — A/B test**: 100 users randomly assigned to RL or Traditional allocation. Measure 3-month retention and savings rate.
+3. **Option C — Historical replay**: Anonymized transaction logs from consenting users. Replay both strategies and compare achievable savings.
+
+Any of these would allow the simulation findings to be described as *corroborated on real behavioral data* — a significant step toward publication-level empirical validity.
+
+---
+
+## 4. Key Features
 
 ### AI & Intelligence Layer
 
@@ -332,38 +379,38 @@ npx supabase db push
 
 ---
 
-## 7. Reproducing Research Results
+## 8. Reproducing Simulation Results
 
-All simulation results are deterministic and fully reproducible using the scripts in `research/`. For a complete step-by-step guide, see [`md/tests_reproducibility.md`](md/tests_reproducibility.md).
+All simulation results are deterministic and fully reproducible. These are **simulation outputs**, not real-world measurements. For a complete step-by-step guide, see [`md/tests_reproducibility.md`](md/tests_reproducibility.md).
 
 ### Quick Reference
 
-| Result | Script | Command |
+| Output | Script | Command |
 | :--- | :--- | :--- |
-| Table I (Cohort Stats) | `fintrac_simulation_final.py` + `extract_results.py` | `python research/fintrac_simulation_final.py && python research/extract_results.py` |
-| Table II (Ablation) | `verify_ablation_thresholds.py` | `python research/verify_ablation_thresholds.py` |
+| Table I (Simulated Cohort Stats) | `fintrac_simulation_final.py` + `extract_results.py` | `python research/fintrac_simulation_final.py` then `python research/extract_results.py` |
+| Table II (Simulated Ablation) | `verify_ablation_thresholds.py` | `python research/verify_ablation_thresholds.py` |
 | IEEE Figures (1-6) | `ieee_figures_and_tables.py` | `python research/ieee_figures_and_tables.py` |
 | Academic Figures | `fintrac_paper_figures.py` | `python research/fintrac_paper_figures.py` |
-| RL Unit Tests | `runFrictionUpdatesTests.ts` | `npx ts-node src/lib/ai/runFrictionUpdatesTests.ts` |
+| RL Algorithm Unit Tests | `runFrictionUpdatesTests.ts` | `npx ts-node src/lib/ai/runFrictionUpdatesTests.ts` |
 
-**Expected key outputs:**
+**Expected simulation outputs (seed=42, N=5,000 synthetic agents):**
 
-- RL Month 12 Retention: **97.08%** | Traditional: **63.54%**
-- Compliance: RL **41.63%** vs Traditional **38.61%** (t = 55.86, p < 0.001)
-- Behavioral Cost: RL **115.22** vs Traditional **115.75** (t = -3.61, p < 0.001, d = -0.02)
-- Seed stability SD: **0.20%** across 5 seeds
+- Simulated RL Month 12 Retention: **97.08%** | Simulated Traditional: **63.54%**
+- Simulated Compliance: RL **41.63%** vs Traditional **38.61%** (t = 55.86, p < 0.001)
+- Simulated Behavioral Cost: RL **115.22** vs Traditional **115.75** (t = -3.61, p < 0.001, d = -0.02)
+- Simulation stability SD: **0.20%** across 5 random seeds
 
 ---
 
-## 8. Documentation Index
+## 9. Documentation Index
 
 All markdown documentation (except this README) is organized in the [`md/`](md/) folder:
 
 | Document | Description |
 | :--- | :--- |
-| [`simulation_monthly_data.md`](md/simulation_monthly_data.md) | Month-by-month compliance, behavioral cost & friction arrays |
-| [`tests_reproducibility.md`](md/tests_reproducibility.md) | Step-by-step reproduction guide for all tables and figures |
-| [`simulation_documentation_1.md`](md/simulation_documentation_1.md) | Full POMDP results, ablation study, seed stability & threats to validity |
+| [`simulation_monthly_data.md`](md/simulation_monthly_data.md) | Month-by-month simulated compliance, behavioral cost & friction arrays |
+| [`tests_reproducibility.md`](md/tests_reproducibility.md) | Step-by-step guide to reproduce all simulation tables and figures |
+| [`simulation_documentation_1.md`](md/simulation_documentation_1.md) | Full POMDP simulation results, ablation study, seed stability & threats to validity |
 | [`simulation_documentation_2.md`](md/simulation_documentation_2.md) | IEEE figure generation methodology |
 | [`simulation_documentation_3.md`](md/simulation_documentation_3.md) | Learning rate sensitivity analysis |
 | [`clerk_supabase_architecture.md`](md/clerk_supabase_architecture.md) | Clerk + Supabase federation & RLS implementation |
@@ -373,7 +420,7 @@ All markdown documentation (except this README) is organized in the [`md/`](md/)
 
 ---
 
-## 9. Author
+## 10. Author
 
 **Zaid Saifi**
 
@@ -382,7 +429,7 @@ All markdown documentation (except this README) is organized in the [`md/`](md/)
 
 ---
 
-## 10. License
+## 11. License
 
 This project is open-source and available under the [MIT License](LICENSE).
 
@@ -390,6 +437,6 @@ This project is open-source and available under the [MIT License](LICENSE).
 
 <div align="center">
 
-*Built with rigorous behavioral science, production-grade engineering, and a belief that sustainable savings should feel natural — not punishing.*
+*Built with rigorous behavioral science, production-grade engineering, and intellectual honesty about what simulation can — and cannot — prove.*
 
 </div>
