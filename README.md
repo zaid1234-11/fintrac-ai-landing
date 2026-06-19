@@ -84,7 +84,7 @@ FinTrac AI is a multi-layer SaaS application with a clear separation of concerns
                              v
 +-------------------------------------------------------------+
 |            Elastic RL Savings Engine (Core ML)               |
-|  POMDP Model . Q-learning Friction Updates . Habit Tracking  |
+|  POMDP Model . Adaptive Friction-Learning Updates . Habit Tracking  |
 +-------------------------------------------------------------+
 ```
 
@@ -114,7 +114,7 @@ Cut(t,c) = Target(t) * [(1 - F_hat(t,c))^2] / [sum over c' of (1 - F_hat(t,c'))^
 
 High-friction categories receive smaller cuts; low-friction categories absorb more.
 
-**Q-Learning Friction Update Rule:**
+**Adaptive Friction-Learning Update Rule:**
 
 ```
 On compliance failure:  F_hat(t+1,c) = F_hat(t,c) + alpha * (1 - obs) * 1.5
@@ -158,7 +158,7 @@ This section is a direct and honest assessment of what has and has not been empi
 
 | Component | Status | Evidence |
 | :--- | :---: | :--- |
-| **RL algorithm correctness** | ✅ Validated | 13 deterministic unit tests pass (Q-learning updates, streak logic, decay thresholds) |
+| **RL algorithm correctness** | ✅ Validated | 13 deterministic unit tests pass (adaptive friction-learning updates, streak logic, decay thresholds) |
 | **Simulation reproducibility** | ✅ Validated | Identical outputs across all seeds with `np.random.seed(42)`; full scripts in `research/` |
 | **Statistical internal consistency** | ✅ Validated | t-tests and chi-squared on simulation outputs confirm the model behaves as designed |
 | **Application architecture** | ✅ Validated | Production Next.js app with Clerk auth, Supabase RLS, Inngest pipelines, and GPT-4o-mini integration |
@@ -196,7 +196,7 @@ Any of these would allow the simulation findings to be described as *corroborate
 
 ### AI & Intelligence Layer
 
-- **Elastic RL Savings Optimizer** — Friction-weighted budget allocation updated monthly via Q-learning.
+- **Elastic RL Savings Optimizer** — Friction-weighted budget allocation updated monthly via adaptive friction-learning.
 - **8-Stage Hybrid Transaction Classifier** — Cascading pipeline: Local Cache → Global Registry → Heuristic Rules → Fuzzy Levenshtein (Fuse.js) → GPT-4o-mini fallback.
 - **AI Financial Chatbot** — Context-aware assistant answering budget questions in natural language.
 - **Behavioral Personality Profiling** — Classifies users into Aspirational Savers, Income Shock profiles, and Seasonal Spenders.
